@@ -1,27 +1,23 @@
-import mysql from "mysql2";
+import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: "mysql",
+  }
+);
 
-// Promisify for async/await support
-export const db = pool.promise();
+try {
+  await sequelize.authenticate();
+  console.log("MySQL Connected Successfully");
+} catch (error) {
+  console.error("MySQL Connection Failed:", error.message);
+}
 
-// Optional: test connection
-db.getConnection()
-  .then((connection) => {
-    console.log("MySQL Connected Successfully");
-    connection.release();
-  })
-  .catch((err) => {
-    console.error("MySQL Connection Failed:", err.message);
-  });
+export const db = sequelize;
