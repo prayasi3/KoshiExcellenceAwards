@@ -4,6 +4,7 @@ import { categoryRoutes } from "./routes/categoryRoutes.js";
 import { editionRoutes } from "./routes/editionRoutes.js";
 import { honoreeRoutes } from "./routes/honoreeRoutes.js";
 import { recipientRoutes } from "./routes/recipientRoutes.js";
+import { sponsorRoutes } from "./routes/sponsorRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ app.use("/api/editions", editionRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/recipients", recipientRoutes);
 app.use("/api/honorees", honoreeRoutes);
+app.use("/api/sponsors", sponsorRoutes);
 
 const PORT = process.env.PORT || 5000;
 
