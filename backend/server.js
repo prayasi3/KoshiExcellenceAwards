@@ -4,6 +4,7 @@ import { categoryRoutes } from "./routes/categoryRoutes.js";
 import { editionRoutes } from "./routes/editionRoutes.js";
 import { honoreeRoutes } from "./routes/honoreeRoutes.js";
 import { recipientRoutes } from "./routes/recipientRoutes.js";
+import { speakerRoutes } from "./routes/speakerRoutes.js";
 import { sponsorRoutes } from "./routes/sponsorRoutes.js";
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/recipients", recipientRoutes);
 app.use("/api/honorees", honoreeRoutes);
 app.use("/api/sponsors", sponsorRoutes);
+app.use("/api/speakers", speakerRoutes);
 
 const PORT = process.env.PORT || 5000;
 
