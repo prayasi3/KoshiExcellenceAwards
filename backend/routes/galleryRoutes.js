@@ -5,7 +5,7 @@ import {
   getAllGalleryItems,
   getGalleryItemById,
   updateGalleryItem,
-} from "../controllers/gallerController.js";
+} from "../controllers/galleryController.js";
 
 const router = express.Router();
 
