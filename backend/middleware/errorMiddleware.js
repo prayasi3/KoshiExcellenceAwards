@@ -6,15 +6,57 @@ export const notFound = (req, res, next) => {
   });
 };
 
+const getSequelizeErrorMessage = (err) => {
+  if (Array.isArray(err.errors) && err.errors.length > 0) {
+    return err.errors.map((error) => error.message).join(", ");
+  }
+
+  return err.message;
+};
+
+const normalizeError = (err) => {
+  if (err.statusCode) {
+    return err;
+  }
+
+  if (err.name === "SequelizeValidationError") {
+    err.statusCode = 400;
+    err.message = getSequelizeErrorMessage(err);
+    err.isOperational = true;
+    return err;
+  }
+
+  if (err.name === "SequelizeUniqueConstraintError") {
+    err.statusCode = 409;
+    err.message = getSequelizeErrorMessage(err);
+    err.isOperational = true;
+    return err;
+  }
+
+  if (err.name === "JsonWebTokenError" || err.name === "TokenExpiredError") {
+    err.statusCode = 401;
+    err.message = "Invalid or expired token";
+    err.isOperational = true;
+    return err;
+  }
+
+  return err;
+};
+
 export const errorHandler = (err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  const error = normalizeError(err);
+  const statusCode = error.statusCode || 500;
   const message =
-    err.isOperational || process.env.NODE_ENV !== "production"
-      ? err.message
+    error.isOperational || process.env.NODE_ENV !== "production"
+      ? error.message
       : "Internal Server Error";
 
-  if (!err.isOperational) {
-    console.error(err.stack);
+  if (!error.isOperational) {
+    console.error(error.stack);
   }
 
   res.status(statusCode).json({
