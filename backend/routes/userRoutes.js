@@ -9,9 +9,9 @@ import {
 import { authorizeRoles, protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+const requireAdmin = [protect, authorizeRoles(["admin", "super_admin"])];
 
-//router.use(protect);
-//router.use(authorizeRoles("super_admin", "admin"));
+router.use(requireAdmin);
 
 router.get("/", getAllUsers);
 router.get("/:id", getUserById);

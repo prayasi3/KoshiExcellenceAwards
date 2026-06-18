@@ -25,7 +25,11 @@ export const protect = async (req, res, next) => {
     try {
       decoded = verifyToken(token);
     } catch (err) {
-      throw new AppError("Invalid token format", 401);
+      throw new AppError("Invalid or expired token", 401);
+    }
+
+    if (decoded.type !== "access") {
+      throw new AppError("Invalid access token", 401);
     }
 
     const user = await User.findByPk(decoded.id, {
@@ -50,11 +54,13 @@ export const protect = async (req, res, next) => {
 export const authorizeRoles =
   (...roles) =>
   (req, res, next) => {
+    const allowedRoles = roles.flat();
+
     if (!req.user) {
       return next(new AppError("Authentication required", 401));
     }
 
-    if (!roles.includes(req.user.role)) {
+    if (!allowedRoles.includes(req.user.role)) {
       return next(new AppError("Access denied", 403));
     }
 

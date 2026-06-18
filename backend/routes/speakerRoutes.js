@@ -6,13 +6,15 @@ import {
   getSpeakerById,
   updateSpeaker,
 } from "../controllers/speakerController.js";
+import { authorizeRoles, protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+const requireAdmin = [protect, authorizeRoles(["admin", "super_admin"])];
 
 router.get("/", getAllSpeakers);
 router.get("/:id", getSpeakerById);
-router.post("/", createSpeaker);
-router.put("/:id", updateSpeaker);
-router.delete("/:id", deleteSpeaker);
+router.post("/", requireAdmin, createSpeaker);
+router.put("/:id", requireAdmin, updateSpeaker);
+router.delete("/:id", requireAdmin, deleteSpeaker);
 
 export const speakerRoutes = router;
