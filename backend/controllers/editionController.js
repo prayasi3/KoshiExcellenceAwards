@@ -1,75 +1,34 @@
-import { Edition } from "../models/Edition.js";
+import {
+  createEditionRecord,
+  deleteEditionRecord,
+  getEdition,
+  getEditions,
+  updateEditionRecord,
+} from "../services/editionService.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { sendSuccess } from "../utils/apiResponse.js";
 
-// GET all editions
-export const getAllEditions = async (req, res) => {
-  try {
-    const editions = await Edition.findAll();
-    res.status(200).json(editions);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+export const getAllEditions = asyncHandler(async (req, res) => {
+  const data = await getEditions();
+  return sendSuccess(res, 200, "Fetched successfully", data);
+});
 
-// GET single edition
-export const getEditionById = async (req, res) => {
-  try {
-    const edition = await Edition.findByPk(req.params.id);
+export const getEditionById = asyncHandler(async (req, res) => {
+  const data = await getEdition(req.params.id);
+  return sendSuccess(res, 200, "Fetched successfully", data);
+});
 
-    if (!edition) {
-      return res.status(404).json({ message: "Edition not found" });
-    }
+export const createEdition = asyncHandler(async (req, res) => {
+  const data = await createEditionRecord(req.body);
+  return sendSuccess(res, 201, "Created successfully", data);
+});
 
-    res.status(200).json(edition);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+export const updateEdition = asyncHandler(async (req, res) => {
+  const data = await updateEditionRecord(req.params.id, req.body);
+  return sendSuccess(res, 200, "Updated successfully", data);
+});
 
-// CREATE edition
-export const createEdition = async (req, res) => {
-  try {
-    const edition = await Edition.create(req.body);
-    res.status(201).json(edition);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// UPDATE edition
-export const updateEdition = async (req, res) => {
-  try {
-    const edition = await Edition.findByPk(req.params.id);
-
-    if (!edition) {
-      return res.status(404).json({ message: "Edition not found" });
-    }
-
-    await edition.update({
-      ...req.body,
-      updated_at: new Date(),
-    });
-
-    res.status(200).json(edition);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// DELETE edition
-export const deleteEdition = async (req, res) => {
-  try {
-    const edition = await Edition.findByPk(req.params.id);
-
-    if (!edition) {
-      return res.status(404).json({ message: "Edition not found" });
-    }
-
-    await edition.destroy();
-
-    res.status(200).json({
-      message: "Edition deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+export const deleteEdition = asyncHandler(async (req, res) => {
+  await deleteEditionRecord(req.params.id);
+  return sendSuccess(res, 200, "Deleted successfully");
+});

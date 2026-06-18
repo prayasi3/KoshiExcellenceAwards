@@ -15,6 +15,8 @@ import { speakerRoutes } from "./routes/speakerRoutes.js";
 import { sponsorRoutes } from "./routes/sponsorRoutes.js";
 import { teamRoutes } from "./routes/teamRoutes.js";
 import { userRoutes } from "./routes/userRoutes.js";
+import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
+import { sendSuccess } from "./utils/apiResponse.js";
 
 dotenv.config();
 
@@ -26,7 +28,9 @@ app.use(express.json());
 
 // test route
 app.get("/", (req, res) => {
-  res.send("Koshi Excellence Awards Backend Running");
+  return sendSuccess(res, 200, "Backend running", {
+    service: "Koshi Excellence Awards API",
+  });
 });
 
 // routes
@@ -41,11 +45,8 @@ app.use("/api/speakers", speakerRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/users", userRoutes);
 
-// error handler (basic but important)
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Internal Server Error" });
-});
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

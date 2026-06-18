@@ -1,5 +1,6 @@
 import { verifyToken } from "../config/jwt.js";
 import { User } from "../models/User.js";
+import { AppError } from "../utils/AppError.js";
 
 const getBearerToken = (req) => {
   const authHeader = req.headers.authorization;
@@ -16,32 +17,33 @@ export const protect = async (req, res, next) => {
     const token = getBearerToken(req);
 
     if (!token) {
-      return res.status(401).json({ message: "Authentication token missing" });
+      throw new AppError("Authentication token missing", 401);
     }
 
     let decoded;
 
-      try {
-        decoded = verifyToken(token);
-      } catch (err) {
-        return res.status(401).json({ message: "Invalid token format" });
-      }
+    try {
+      decoded = verifyToken(token);
+    } catch (err) {
+      throw new AppError("Invalid token format", 401);
+    }
+
     const user = await User.findByPk(decoded.id, {
       attributes: { exclude: ["password_hash"] },
     });
 
     if (!user) {
-      return res.status(401).json({ message: "User no longer exists" });
+      throw new AppError("User no longer exists", 401);
     }
 
     if (user.status !== "active") {
-      return res.status(403).json({ message: "User account is inactive" });
+      throw new AppError("User account is inactive", 403);
     }
 
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid or expired token" });
+    next(error);
   }
 };
 
@@ -49,11 +51,11 @@ export const authorizeRoles =
   (...roles) =>
   (req, res, next) => {
     if (!req.user) {
-      return res.status(401).json({ message: "Authentication required" });
+      return next(new AppError("Authentication required", 401));
     }
 
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Access denied" });
+      return next(new AppError("Access denied", 403));
     }
 
     next();

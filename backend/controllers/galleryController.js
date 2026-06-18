@@ -1,95 +1,34 @@
-import { Gallery } from "../models/Gallery.js";
+import {
+  createGalleryRecord,
+  deleteGalleryRecord,
+  getGalleryItem,
+  getGalleryItems,
+  updateGalleryRecord,
+} from "../services/galleryService.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { sendSuccess } from "../utils/apiResponse.js";
 
-const galleryFields = [
-  "edition_id",
-  "media_type",
-  "media_url",
-  "caption",
-  "created_at",
-];
+export const getAllGalleryItems = asyncHandler(async (req, res) => {
+  const data = await getGalleryItems();
+  return sendSuccess(res, 200, "Fetched successfully", data);
+});
 
-const getGalleryPayload = (body) => {
-  const payload = {};
+export const getGalleryItemById = asyncHandler(async (req, res) => {
+  const data = await getGalleryItem(req.params.id);
+  return sendSuccess(res, 200, "Fetched successfully", data);
+});
 
-  galleryFields.forEach((field) => {
-    if (body[field] !== undefined) {
-      payload[field] = body[field];
-    }
-  });
+export const createGalleryItem = asyncHandler(async (req, res) => {
+  const data = await createGalleryRecord(req.body);
+  return sendSuccess(res, 201, "Created successfully", data);
+});
 
-  return payload;
-};
+export const updateGalleryItem = asyncHandler(async (req, res) => {
+  const data = await updateGalleryRecord(req.params.id, req.body);
+  return sendSuccess(res, 200, "Updated successfully", data);
+});
 
-// GET all gallery items
-export const getAllGalleryItems = async (req, res) => {
-  try {
-    const galleryItems = await Gallery.findAll({
-      order: [["created_at", "DESC"]],
-    });
-
-    res.status(200).json(galleryItems);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// GET single gallery item
-export const getGalleryItemById = async (req, res) => {
-  try {
-    const galleryItem = await Gallery.findByPk(req.params.id);
-
-    if (!galleryItem) {
-      return res.status(404).json({ message: "Gallery item not found" });
-    }
-
-    res.status(200).json(galleryItem);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// CREATE gallery item
-export const createGalleryItem = async (req, res) => {
-  try {
-    const galleryItem = await Gallery.create(getGalleryPayload(req.body));
-    res.status(201).json(galleryItem);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// UPDATE gallery item
-export const updateGalleryItem = async (req, res) => {
-  try {
-    const galleryItem = await Gallery.findByPk(req.params.id);
-
-    if (!galleryItem) {
-      return res.status(404).json({ message: "Gallery item not found" });
-    }
-
-    await galleryItem.update(getGalleryPayload(req.body));
-
-    res.status(200).json(galleryItem);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// DELETE gallery item
-export const deleteGalleryItem = async (req, res) => {
-  try {
-    const galleryItem = await Gallery.findByPk(req.params.id);
-
-    if (!galleryItem) {
-      return res.status(404).json({ message: "Gallery item not found" });
-    }
-
-    await galleryItem.destroy();
-
-    res.status(200).json({
-      message: "Gallery item deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+export const deleteGalleryItem = asyncHandler(async (req, res) => {
+  await deleteGalleryRecord(req.params.id);
+  return sendSuccess(res, 200, "Deleted successfully");
+});

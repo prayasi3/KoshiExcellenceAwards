@@ -1,98 +1,34 @@
-import { Sponsor } from "../models/Sponsor.js";
+import {
+  createSponsorRecord,
+  deleteSponsorRecord,
+  getSponsor,
+  getSponsors,
+  updateSponsorRecord,
+} from "../services/sponsorService.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { sendSuccess } from "../utils/apiResponse.js";
 
-const sponsorFields = [
-  "edition_id",
-  "sponsor_name",
-  "logo_url",
-  "website",
-  "sponsor_level",
-  "display_order",
-];
+export const getAllSponsors = asyncHandler(async (req, res) => {
+  const data = await getSponsors();
+  return sendSuccess(res, 200, "Fetched successfully", data);
+});
 
-const getSponsorPayload = (body) => {
-  const payload = {};
+export const getSponsorById = asyncHandler(async (req, res) => {
+  const data = await getSponsor(req.params.id);
+  return sendSuccess(res, 200, "Fetched successfully", data);
+});
 
-  sponsorFields.forEach((field) => {
-    if (body[field] !== undefined) {
-      payload[field] = body[field];
-    }
-  });
+export const createSponsor = asyncHandler(async (req, res) => {
+  const data = await createSponsorRecord(req.body);
+  return sendSuccess(res, 201, "Created successfully", data);
+});
 
-  return payload;
-};
+export const updateSponsor = asyncHandler(async (req, res) => {
+  const data = await updateSponsorRecord(req.params.id, req.body);
+  return sendSuccess(res, 200, "Updated successfully", data);
+});
 
-// GET all sponsors
-export const getAllSponsors = async (req, res) => {
-  try {
-    const sponsors = await Sponsor.findAll({
-      order: [["display_order", "ASC"]],
-    });
-
-    res.status(200).json(sponsors);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// GET single sponsor
-export const getSponsorById = async (req, res) => {
-  try {
-    const sponsor = await Sponsor.findByPk(req.params.id);
-
-    if (!sponsor) {
-      return res.status(404).json({ message: "Sponsor not found" });
-    }
-
-    res.status(200).json(sponsor);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// CREATE sponsor
-export const createSponsor = async (req, res) => {
-  try {
-    const payload = getSponsorPayload(req.body);
-    const sponsor = await Sponsor.create(payload);
-
-    res.status(201).json(sponsor);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// UPDATE sponsor
-export const updateSponsor = async (req, res) => {
-  try {
-    const sponsor = await Sponsor.findByPk(req.params.id);
-
-    if (!sponsor) {
-      return res.status(404).json({ message: "Sponsor not found" });
-    }
-
-    await sponsor.update(getSponsorPayload(req.body));
-
-    res.status(200).json(sponsor);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// DELETE sponsor
-export const deleteSponsor = async (req, res) => {
-  try {
-    const sponsor = await Sponsor.findByPk(req.params.id);
-
-    if (!sponsor) {
-      return res.status(404).json({ message: "Sponsor not found" });
-    }
-
-    await sponsor.destroy();
-
-    res.status(200).json({
-      message: "Sponsor deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+export const deleteSponsor = asyncHandler(async (req, res) => {
+  await deleteSponsorRecord(req.params.id);
+  return sendSuccess(res, 200, "Deleted successfully");
+});
