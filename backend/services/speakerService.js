@@ -1,5 +1,7 @@
 import { Speaker } from "../models/Speaker.js";
 import {
+  findPaginated,
+  getEditionInclude,
   hasBlankValue,
   pickFields,
   requireFound,
@@ -20,9 +22,13 @@ const speakerFields = [
   "updated_at",
 ];
 
-export const getSpeakers = async () =>
-  Speaker.findAll({
-    order: [["display_order", "ASC"]],
+export const getSpeakers = async (query) =>
+  findPaginated(Speaker, query, {
+    allowedFilters: ["edition_id"],
+    defaultOrder: [["display_order", "ASC"]],
+    sortableFields: ["id", "name", "display_order", "created_at"],
+    include: getEditionInclude(query),
+    allowedSpecialFilters: ["edition"],
   });
 
 export const getSpeaker = async (id) =>

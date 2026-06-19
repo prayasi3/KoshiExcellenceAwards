@@ -1,5 +1,10 @@
 import { Gallery } from "../models/Gallery.js";
-import { pickFields, requireFound } from "./serviceUtils.js";
+import {
+  findPaginated,
+  getEditionInclude,
+  pickFields,
+  requireFound,
+} from "./serviceUtils.js";
 
 const galleryFields = [
   "edition_id",
@@ -9,9 +14,12 @@ const galleryFields = [
   "created_at",
 ];
 
-export const getGalleryItems = async () =>
-  Gallery.findAll({
-    order: [["created_at", "DESC"]],
+export const getGalleryItems = async (query) =>
+  findPaginated(Gallery, query, {
+    allowedFilters: ["edition_id", "media_type"],
+    defaultOrder: [["created_at", "DESC"]],
+    sortableFields: ["id", "media_type", "created_at"],
+    include: getEditionInclude(query),
   });
 
 export const getGalleryItem = async (id) =>

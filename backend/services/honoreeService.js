@@ -1,5 +1,7 @@
 import { Honoree } from "../models/Honoree.js";
 import {
+  findPaginated,
+  getEditionInclude,
   hasBlankValue,
   pickFields,
   requireFound,
@@ -15,7 +17,14 @@ const honoreeFields = [
   "created_at",
 ];
 
-export const getHonorees = async () => Honoree.findAll();
+export const getHonorees = async (query) =>
+  findPaginated(Honoree, query, {
+    allowedFilters: ["edition_id"],
+    defaultOrder: [["created_at", "DESC"]],
+    sortableFields: ["id", "name", "title", "created_at"],
+    include: getEditionInclude(query),
+    allowedSpecialFilters: ["edition"],
+  });
 
 export const getHonoree = async (id) =>
   requireFound(await Honoree.findByPk(id), "Honoree not found");

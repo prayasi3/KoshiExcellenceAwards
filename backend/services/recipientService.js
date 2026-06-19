@@ -1,5 +1,7 @@
 import { Recipient } from "../models/Recipient.js";
 import {
+  findPaginated,
+  getEditionInclude,
   hasBlankValue,
   pickFields,
   requireFound,
@@ -19,7 +21,14 @@ const recipientFields = [
   "selected_at",
 ];
 
-export const getRecipients = async () => Recipient.findAll();
+export const getRecipients = async (query) =>
+  findPaginated(Recipient, query, {
+    allowedFilters: ["edition_id", "category_id"],
+    defaultOrder: [["selected_at", "DESC"]],
+    sortableFields: ["id", "full_name", "organization", "selected_at"],
+    include: getEditionInclude(query),
+    allowedSpecialFilters: ["edition"],
+  });
 
 export const getRecipient = async (id) =>
   requireFound(await Recipient.findByPk(id), "Recipient not found");

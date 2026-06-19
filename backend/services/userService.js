@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { User } from "../models/User.js";
 import {
   hasBlankValue,
+  findPaginated,
   pickFields,
   requireFound,
   requireValue,
@@ -36,10 +37,12 @@ const toUserResponse = (user) => {
   return data;
 };
 
-export const getUsers = async () => {
-  return User.findAll({
+export const getUsers = async (query) => {
+  return findPaginated(User, query, {
     attributes: { exclude: ["password_hash"] },
-    order: [["created_at", "DESC"]],
+    allowedFilters: ["role", "status"],
+    defaultOrder: [["created_at", "DESC"]],
+    sortableFields: ["id", "full_name", "email", "role", "status", "created_at"],
   });
 };
 

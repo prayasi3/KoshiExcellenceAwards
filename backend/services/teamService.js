@@ -1,5 +1,6 @@
 import { Team } from "../models/Team.js";
 import {
+  findPaginated,
   hasBlankValue,
   pickFields,
   requireFound,
@@ -20,11 +21,20 @@ const teamFields = [
   "updated_at",
 ];
 
-export const getTeams = async () =>
-  Team.findAll({
-    order: [
+export const getTeams = async (query) =>
+  findPaginated(Team, query, {
+    allowedFilters: ["role", "is_active"],
+    defaultOrder: [
       ["role_priority", "ASC"],
       ["display_order", "ASC"],
+    ],
+    sortableFields: [
+      "id",
+      "full_name",
+      "role",
+      "role_priority",
+      "display_order",
+      "created_at",
     ],
   });
 

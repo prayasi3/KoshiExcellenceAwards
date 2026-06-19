@@ -1,5 +1,10 @@
 import { Sponsor } from "../models/Sponsor.js";
-import { pickFields, requireFound } from "./serviceUtils.js";
+import {
+  findPaginated,
+  getEditionInclude,
+  pickFields,
+  requireFound,
+} from "./serviceUtils.js";
 
 const sponsorFields = [
   "edition_id",
@@ -10,9 +15,13 @@ const sponsorFields = [
   "display_order",
 ];
 
-export const getSponsors = async () =>
-  Sponsor.findAll({
-    order: [["display_order", "ASC"]],
+export const getSponsors = async (query) =>
+  findPaginated(Sponsor, query, {
+    allowedFilters: ["edition_id", "sponsor_level"],
+    defaultOrder: [["display_order", "ASC"]],
+    sortableFields: ["id", "sponsor_name", "sponsor_level", "display_order"],
+    include: getEditionInclude(query),
+    allowedSpecialFilters: ["edition"],
   });
 
 export const getSponsor = async (id) =>

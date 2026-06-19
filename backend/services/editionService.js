@@ -1,7 +1,12 @@
 import { Edition } from "../models/Edition.js";
-import { requireFound } from "./serviceUtils.js";
+import { findPaginated, requireFound } from "./serviceUtils.js";
 
-export const getEditions = async () => Edition.findAll();
+export const getEditions = async (query) =>
+  findPaginated(Edition, query, {
+    allowedFilters: ["year", "status"],
+    defaultOrder: [["year", "DESC"]],
+    sortableFields: ["id", "year", "event_date", "status", "created_at"],
+  });
 
 export const getEdition = async (id) =>
   requireFound(await Edition.findByPk(id), "Edition not found");

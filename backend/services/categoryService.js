@@ -1,5 +1,6 @@
 import { Category } from "../models/Category.js";
 import {
+  findPaginated,
   hasBlankValue,
   pickFields,
   requireFound,
@@ -8,7 +9,12 @@ import {
 
 const categoryFields = ["category_name", "description", "is_active"];
 
-export const getCategories = async () => Category.findAll();
+export const getCategories = async (query) =>
+  findPaginated(Category, query, {
+    allowedFilters: ["is_active"],
+    defaultOrder: [["category_name", "ASC"]],
+    sortableFields: ["id", "category_name", "is_active"],
+  });
 
 export const getCategory = async (id) =>
   requireFound(await Category.findByPk(id), "Category not found");

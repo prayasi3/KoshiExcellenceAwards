@@ -10,7 +10,7 @@ import { sendSuccess } from "../utils/apiResponse.js";
 
 // GET all users
 export const getAllUsers = asyncHandler(async (req, res) => {
-  const data = await getUsers();
+  const data = await getUsers(req.query);
   return sendSuccess(res, 200, "Fetched successfully", data);
 });
 

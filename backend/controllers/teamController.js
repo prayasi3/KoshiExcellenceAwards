@@ -9,7 +9,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendSuccess } from "../utils/apiResponse.js";
 
 export const getAllTeams = asyncHandler(async (req, res) => {
-  const data = await getTeams();
+  const data = await getTeams(req.query);
   return sendSuccess(res, 200, "Fetched successfully", data);
 });
 

@@ -9,7 +9,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendSuccess } from "../utils/apiResponse.js";
 
 export const getAllSponsors = asyncHandler(async (req, res) => {
-  const data = await getSponsors();
+  const data = await getSponsors(req.query);
   return sendSuccess(res, 200, "Fetched successfully", data);
 });
 
