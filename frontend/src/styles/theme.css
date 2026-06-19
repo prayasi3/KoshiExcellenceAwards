@@ -1,0 +1,12 @@
+:root {
+  --primary: #0B1F3A;   /* Navy */
+  --secondary: #D4AF37; /* Gold */
+  --white: #FFFFFF;
+  --text: #eaeaea;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f8f9fb;
+}
