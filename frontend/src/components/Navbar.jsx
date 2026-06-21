@@ -10,7 +10,7 @@ export default function Navbar() {
       <div className="nav-container">
 
         <div className="logo">
-          Koshi Excellence
+          Koshi Excellence Awards
         </div>
 
         <button
@@ -29,7 +29,7 @@ export default function Navbar() {
           <Link to="/speakers">Speakers</Link>
           <Link to="/sponsors">Sponsors</Link>
           <Link to="/gallery">Gallery</Link>
-          <Link to="/about">About</Link>
+          <Link to="/about">About Us</Link>
           <Link to="/contact">Contact</Link>
         </nav>
 

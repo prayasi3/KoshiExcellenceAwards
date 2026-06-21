@@ -1,9 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
-
-function Home() {
-  return <h1>Home Page</h1>;
-}
+import Home from "./pages/Home";
 
 function About() {
   return <h1>About Page</h1>;
