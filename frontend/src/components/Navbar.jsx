@@ -22,10 +22,14 @@ export default function Navbar() {
 
         <nav className={`links ${open ? "active" : ""}`}>
           <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
           <Link to="/categories">Categories</Link>
+          <Link to="/recipients">Award Recipients</Link>
           <Link to="/honorees">Honorees</Link>
+          <Link to="/teams">Teams</Link>
+          <Link to="/speakers">Speakers</Link>
+          <Link to="/sponsors">Sponsors</Link>
           <Link to="/gallery">Gallery</Link>
+          <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
         </nav>
 
