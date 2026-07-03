@@ -168,12 +168,10 @@ const recipientBaseSchema = z.object({
   edition_id: requiredPositiveInt("Edition ID"),
   category_id: requiredPositiveInt("Category ID"),
   full_name: requiredString("Full name"),
-  organization: optionalString(),
+  title: optionalString(),
+  slug: optionalString(),
   bio: optionalString(5000),
   photo_url: optionalString(500),
-  citation: optionalString(5000),
-  selected_by: optionalString(),
-  selected_at: optionalDate,
 });
 
 export const recipientSchemas = {

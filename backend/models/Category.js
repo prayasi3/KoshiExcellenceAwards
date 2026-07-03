@@ -15,6 +15,11 @@ export const Category = db.define(
       allowNull: false,
     },
 
+    slug: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+
     description: {
       type: DataTypes.TEXT,
       allowNull: true,

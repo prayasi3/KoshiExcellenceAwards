@@ -35,7 +35,7 @@ export const Recipient = db.define(
       allowNull: false,
     },
 
-    organization: {
+    title: {
       type: DataTypes.STRING(255),
       allowNull: true,
     },
@@ -46,23 +46,8 @@ export const Recipient = db.define(
     },
 
     photo_url: {
-      type: DataTypes.STRING(500),
-      allowNull: true,
-    },
-
-    citation: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-
-    selected_by: {
       type: DataTypes.STRING(255),
       allowNull: true,
-    },
-
-    selected_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
     },
   },
   {

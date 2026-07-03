@@ -13,19 +13,16 @@ const recipientFields = [
   "edition_id",
   "category_id",
   "full_name",
-  "organization",
+  "title",
   "bio",
   "photo_url",
-  "citation",
-  "selected_by",
-  "selected_at",
 ];
 
 export const getRecipients = async (query) =>
   findPaginated(Recipient, query, {
     allowedFilters: ["edition_id", "category_id"],
-    defaultOrder: [["selected_at", "DESC"]],
-    sortableFields: ["id", "full_name", "organization", "selected_at"],
+    defaultOrder: [["id", "DESC"]],
+    sortableFields: ["id", "full_name", "title"],
     include: getEditionInclude(query),
     allowedSpecialFilters: ["edition"],
   });
