@@ -51,7 +51,7 @@ export const registerUser = async ({ full_name, email, password }) => {
     full_name,
     email,
     password_hash,
-    role: "super_admin",
+    role: "admin",
     status: "active",
   });
 

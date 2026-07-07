@@ -85,7 +85,7 @@ const userBaseSchema = z.object({
     8,
     "Password must be at least 8 characters"
   ),
-  role: z.enum(["admin", "super_admin"]).optional(),
+  role: z.enum(["admin"]).optional(),
   status: z.enum(["active", "inactive"]).optional(),
   last_login: optionalDate,
 });

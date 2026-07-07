@@ -27,7 +27,7 @@ export const User = db.define(
     },
 
     role: {
-      type: DataTypes.ENUM("super_admin", "admin"),
+      type: DataTypes.ENUM("admin"),
       defaultValue: "admin",
     },
 
