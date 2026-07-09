@@ -15,6 +15,7 @@ import { speakerRoutes } from "./routes/speakerRoutes.js";
 import { sponsorRoutes } from "./routes/sponsorRoutes.js";
 import { teamRoutes } from "./routes/teamRoutes.js";
 import { userRoutes } from "./routes/userRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import { sendSuccess } from "./utils/apiResponse.js";
 
@@ -44,6 +45,7 @@ app.use("/api/sponsors", sponsorRoutes);
 app.use("/api/speakers", speakerRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/admin/dashboard", dashboardRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
