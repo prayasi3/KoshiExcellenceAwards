@@ -6,6 +6,7 @@ import Home from "../pages/Home";
 // Admin
 import Login from "../admin/pages/Login";
 import Dashboard from "../admin/pages/Dashboard";
+import AdminLayout from "../admin/layouts/AdminLayout";
 import ProtectedRoute from "../admin/routes/ProtectedRoute";
 
 function About() {
@@ -34,17 +35,26 @@ export default function AppRoutes() {
         }
       />
 
-      {/* Admin */}
+      {/* Login */}
       <Route path="/admin/login" element={<Login />} />
 
-      <Route
-        path="/admin/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+      {/* Protected Admin Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+
+          {/* Add more pages here later */}
+          {/* <Route path="users" element={<Users />} /> */}
+          {/* <Route path="categories" element={<Categories />} /> */}
+          {/* <Route path="editions" element={<Editions />} /> */}
+          {/* <Route path="recipients" element={<Recipients />} /> */}
+          {/* <Route path="honorees" element={<Honorees />} /> */}
+          {/* <Route path="gallery" element={<Gallery />} /> */}
+          {/* <Route path="sponsors" element={<Sponsors />} /> */}
+          {/* <Route path="speakers" element={<Speakers />} /> */}
+          {/* <Route path="team" element={<Team />} /> */}
+        </Route>
+      </Route>
     </Routes>
   );
 }

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const loginSchema = z.object({
   email: z
@@ -18,6 +19,7 @@ const loginSchema = z.object({
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -40,9 +42,12 @@ export default function Login() {
         data
       );
 
-      const token = res.data.data.token;
+     const token = res.data.data.token;
 
-      localStorage.setItem("token", token);
+      login({
+        token,
+        user: res.data.data.user || null,
+      });
 
       navigate("/admin/dashboard");
     } catch (err) {

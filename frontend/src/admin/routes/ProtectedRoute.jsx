@@ -1,11 +1,12 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("token");
+  const { token } = useAuth();
 
   if (!token) {
     return <Navigate to="/admin/login" replace />;
   }
 
-  return children;
+  return children ? children : <Outlet />;
 }
