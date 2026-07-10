@@ -4,36 +4,46 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import {
-  getCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} from "../services/categoryService";
+  getEditions,
+  createEdition,
+  updateEdition,
+  deleteEdition,
+} from "../services/editionService";
 
 // =======================
 // Zod Schema
 // =======================
 
-const categorySchema = z.object({
-  category_name: z
+const editionSchema = z.object({
+  title: z
     .string()
-    .min(2, "Category name must be at least 2 characters"),
+    .min(2, "Edition title must be at least 2 characters"),
 
-  description: z.string().optional(),
+  year: z.coerce
+  .number({
+    required_error: "Year is required",
+  })
+  .int("Year must be a whole number")
+  .min(1900, "Year must be at least 1900")
+  .max(2100, "Year must be at most 2100"),
+
+  venue: z.string().optional(),
+
+  event_date: z.string().optional(),
 
   is_active: z.boolean(),
 });
 
-export default function Categories() {
+export default function Editions() {
   // =======================
   // State
   // =======================
 
-  const [categories, setCategories] = useState([]);
+  const [editions, setEditions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
+  const [editingEdition, setEditingEdition] = useState(null);
 
   // =======================
   // React Hook Form
@@ -45,36 +55,38 @@ export default function Categories() {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(categorySchema),
+    resolver: zodResolver(editionSchema),
 
     defaultValues: {
-      category_name: "",
-      description: "",
+      title: "",
+      year: "",
+      venue: "",
+      event_date: "",
       is_active: true,
     },
   });
 
   // =======================
-  // Fetch Categories
+  // Fetch Editions
   // =======================
 
-  const fetchCategories = async () => {
+  const fetchEditions = async () => {
     try {
       setLoading(true);
 
-      const data = await getCategories();
+      const data = await getEditions();
 
-      setCategories(data);
+      setEditions(data);
     } catch (err) {
       console.error(err);
-      alert("Failed to load categories.");
+      alert("Failed to load editions.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchEditions();
   }, []);
 
   // =======================
@@ -82,11 +94,13 @@ export default function Categories() {
   // =======================
 
   const handleAdd = () => {
-    setEditingCategory(null);
+    setEditingEdition(null);
 
     reset({
-      category_name: "",
-      description: "",
+      title: "",
+      year: "",
+      venue: "",
+      event_date: "",
       is_active: true,
     });
 
@@ -97,13 +111,15 @@ export default function Categories() {
   // Open Edit Modal
   // =======================
 
-  const handleEdit = (category) => {
-    setEditingCategory(category);
+  const handleEdit = (edition) => {
+    setEditingEdition(edition);
 
     reset({
-      category_name: category.category_name,
-      description: category.description || "",
-      is_active: category.is_active,
+      title: edition.title || "",
+      year: edition.year || "",
+        venue: edition.venue || "",
+        event_date: edition.event_date ? new Date(edition.event_date).toISOString().split("T")[0] : "",
+      is_active: edition.is_active,
     });
 
     setShowModal(true);
@@ -115,26 +131,28 @@ export default function Categories() {
 
   const onSubmit = async (data) => {
     try {
-      if (editingCategory) {
-        await updateCategory(editingCategory.id, data);
+      if (editingEdition) {
+        await updateEdition(editingEdition.id, data);
 
-        alert("Category updated successfully.");
+        alert("Edition updated successfully.");
       } else {
-        await createCategory(data);
+        await createEdition(data);
 
-        alert("Category created successfully.");
+        alert("Edition created successfully.");
       }
 
       reset({
-        category_name: "",
-        description: "",
+        title: "",
+        year: "",
+        venue: "",
+        event_date: "",
         is_active: true,
       });
 
-      setEditingCategory(null);
+      setEditingEdition(null);
       setShowModal(false);
 
-      fetchCategories();
+      fetchEditions();
     } catch (err) {
       console.error(err);
       alert("Something went wrong.");
@@ -142,25 +160,25 @@ export default function Categories() {
   };
 
   // =======================
-  // Delete Category
+  // Delete Edition
   // =======================
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this category?"
+      "Are you sure you want to delete this edition?"
     );
 
     if (!confirmDelete) return;
 
     try {
-      await deleteCategory(id);
+      await deleteEdition(id);
 
-      alert("Category deleted successfully.");
+      alert("Edition deleted successfully.");
 
-      fetchCategories();
+      fetchEditions();
     } catch (err) {
       console.error(err);
-      alert("Failed to delete category.");
+      alert("Failed to delete edition.");
     }
   };
 
@@ -175,13 +193,13 @@ export default function Categories() {
       ======================== */}
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Categories</h1>
+        <h1 className="text-3xl font-bold">Editions</h1>
 
         <button
           onClick={handleAdd}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
         >
-          + Add Category
+          + Add Edition
         </button>
       </div>
 
@@ -191,7 +209,7 @@ export default function Categories() {
 
       {loading ? (
         <div className="text-center py-10 text-lg">
-          Loading categories...
+          Loading editions...
         </div>
       ) : (
         <>
@@ -204,38 +222,48 @@ export default function Categories() {
               <thead className="bg-gray-100">
                 <tr>
                   <th className="border p-3 text-left">ID</th>
-                  <th className="border p-3 text-left">Category</th>
-                  <th className="border p-3 text-left">Description</th>
-                  <th className="border p-3 text-left">Status</th>
-                  <th className="border p-3 text-center">Actions</th>
+                  <th className="border p-3 text-left">Title</th>
+                  <th className="border p-3 text-left">Year</th>
+                  <th className="border p-3 text-left">Venue</th>
+                  <th className="border p-3 text-center">Event Date</th>
+                  <th className="border p-3 text-center">Status</th>
+                    <th className="border p-3 text-center">Actions</th>
                 </tr>
               </thead>
 
               <tbody>
-                {categories.length === 0 ? (
+                {editions.length === 0 ? (
                   <tr>
                     <td
                       colSpan="7"
                       className="border p-6 text-center text-gray-500"
                     >
-                      No categories found.
+                      No editions found.
                     </td>
                   </tr>
                 ) : (
-                  categories.map((category) => (
-                    <tr key={category.id} className="hover:bg-gray-50">
-                      <td className="border p-3">{category.id}</td>
+                  editions.map((edition) => (
+                    <tr key={edition.id} className="hover:bg-gray-50">
+                      <td className="border p-3">{edition.id}</td>
 
                       <td className="border p-3 font-medium">
-                        {category.category_name}
+                        {edition.title || "-"}
                       </td>
 
                       <td className="border p-3">
-                        {category.description || "-"}
+                        {edition.year || "-"}
                       </td>
 
                       <td className="border p-3">
-                        {category.is_active ? (
+                        {edition.venue || "-"}
+                      </td>
+
+                      <td className="border p-3 text-center">
+                        {edition.event_date ? new Date(edition.event_date).toLocaleDateString() : "-"}
+                      </td>
+
+                      <td className="border p-3">
+                        {edition.is_active ? (
                           <span className="text-green-600 font-medium">
                             Active
                           </span>
@@ -248,14 +276,14 @@ export default function Categories() {
 
                       <td className="border p-3 text-center space-x-2">
                         <button
-                          onClick={() => handleEdit(category)}
+                          onClick={() => handleEdit(edition)}
                           className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
                         >
                           Edit
                         </button>
 
                         <button
-                          onClick={() => handleDelete(category.id)}
+                          onClick={() => handleDelete(edition.id)}
                           className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
                         >
                           Delete
@@ -278,49 +306,73 @@ export default function Categories() {
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
             <h2 className="text-2xl font-bold mb-6">
-              {editingCategory ? "Edit Category" : "Add Category"}
+              {editingEdition ? "Edit Edition" : "Add Edition"}
             </h2>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-              {/* Category Name */}
+              {/* Edition Title */}
 
               <div className="mb-4">
                 <label className="block mb-2 font-medium">
-                  Category Name
+                  Edition Title
                 </label>
 
                 <input
                   type="text"
-                  {...register("category_name")}
+                  {...register("edition_title")}
                   className="w-full border rounded p-2"
                 />
 
-                {errors.category_name && (
+                {errors.edition_title && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.category_name.message}
+                    {errors.edition_title.message}
                   </p>
                 )}
               </div>
 
-              {/* Description */}
+              {/* Year */}
+  <div>
+    <label className="block mb-1 font-medium">Year</label>
+    <input
+      type="number"
+      {...register("year")}
+      className="w-full border rounded p-2"
+      placeholder="2026"
+    />
+    {errors.year && (
+      <p className="text-red-500 text-sm">{errors.year.message}</p>
+    )}
+  </div>
 
-              <div className="mb-4">
-                <label className="block mb-2 font-medium">
-                  Description
-                </label>
+  {/* Venue */}
+  <div>
+    <label className="block mb-1 font-medium">Venue</label>
+    <input
+      {...register("venue", {
+        required: "Venue is required",
+      })}
+      className="w-full border rounded p-2"
+      placeholder="Biratnagar"
+    />
+    {errors.venue && (
+      <p className="text-red-500 text-sm">{errors.venue.message}</p>
+    )}
+  </div>
 
-                <textarea
-                  rows={4}
-                  {...register("description")}
-                  className="w-full border rounded p-2"
+            {/* Event Date */}
+            <div>
+                <label className="block mb-1 font-medium">Event Date</label>
+                <input
+                type="date"
+                {...register("event_date", {
+                    required: "Event Date is required",
+                })}
+                className="w-full border rounded p-2"
                 />
-
-                {errors.description && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.description.message}
-                  </p>
+                {errors.event_date && (
+                <p className="text-red-500 text-sm">{errors.event_date.message}</p>
                 )}
-              </div>
+            </div>
 
               {/* Active */}
 
@@ -340,11 +392,13 @@ export default function Categories() {
                   type="button"
                   onClick={() => {
                     setShowModal(false);
-                    setEditingCategory(null);
+                    setEditingEdition(null);
 
                     reset({
-                      category_name: "",
-                      description: "",
+                      edition_title: "",
+                      year: "",
+                      venue: "",
+                      event_date: "",
                       is_active: true,
                     });
                   }}
@@ -357,9 +411,9 @@ export default function Categories() {
                   type="submit"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
                 >
-                  {editingCategory
-                    ? "Update Category"
-                    : "Create Category"}
+                  {editingEdition
+                    ? "Update Edition"
+                    : "Create Edition"}
                 </button>
               </div>
             </form>
