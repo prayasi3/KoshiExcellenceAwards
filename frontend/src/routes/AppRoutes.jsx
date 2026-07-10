@@ -8,6 +8,7 @@ import Login from "../admin/pages/Login";
 import Dashboard from "../admin/pages/Dashboard";
 import AdminLayout from "../admin/layouts/AdminLayout";
 import ProtectedRoute from "../admin/routes/ProtectedRoute";
+import Categories from "../admin/pages/Categories";
 
 function About() {
   return <h1>About Page</h1>;
@@ -45,7 +46,7 @@ export default function AppRoutes() {
 
           {/* Add more pages here later */}
           {/* <Route path="users" element={<Users />} /> */}
-          {/* <Route path="categories" element={<Categories />} /> */}
+          <Route path="categories" element={<Categories />} />
           {/* <Route path="editions" element={<Editions />} /> */}
           {/* <Route path="recipients" element={<Recipients />} /> */}
           {/* <Route path="honorees" element={<Honorees />} /> */}
