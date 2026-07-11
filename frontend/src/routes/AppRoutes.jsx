@@ -12,6 +12,7 @@ import Categories from "../admin/pages/Categories";
 import Editions from "../admin/pages/Editions";
 import Recipients from "../admin/pages/Recipients";
 import Honorees from "../admin/pages/Honorees";
+import Sponsors from "../admin/pages/Sponsors";
 
 function About() {
   return <h1>About Page</h1>;
@@ -54,7 +55,7 @@ export default function AppRoutes() {
           <Route path="recipients" element={<Recipients />} />
           <Route path="honorees" element={<Honorees />} />
           {/* <Route path="gallery" element={<Gallery />} /> */}
-          {/* <Route path="sponsors" element={<Sponsors />} /> */}
+          <Route path="sponsors" element={<Sponsors />} />
           {/* <Route path="speakers" element={<Speakers />} /> */}
           {/* <Route path="team" element={<Team />} /> */}
         </Route>
