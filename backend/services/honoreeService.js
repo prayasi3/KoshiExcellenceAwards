@@ -11,7 +11,9 @@ import {
 const honoreeFields = [
   "edition_id",
   "name",
-  "title",
+  "subtitle",
+  "slug",
+  "recognition",
   "description",
   "image_url",
   "created_at",
@@ -21,7 +23,7 @@ export const getHonorees = async (query) =>
   findPaginated(Honoree, query, {
     allowedFilters: ["edition_id"],
     defaultOrder: [["created_at", "DESC"]],
-    sortableFields: ["id", "name", "title", "created_at"],
+    sortableFields: ["id", "name", "subtitle", "created_at"],
     include: getEditionInclude(query),
     allowedSpecialFilters: ["edition"],
   });

@@ -25,7 +25,18 @@ export const Honoree = db.define(
       allowNull: false,
     },
 
-    title: {
+    subtitle: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+
+    slug: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      unique: true,
+    },
+
+    recognition: {
       type: DataTypes.STRING(255),
       allowNull: true,
     },

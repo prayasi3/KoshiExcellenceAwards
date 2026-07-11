@@ -11,6 +11,7 @@ import ProtectedRoute from "../admin/routes/ProtectedRoute";
 import Categories from "../admin/pages/Categories";
 import Editions from "../admin/pages/Editions";
 import Recipients from "../admin/pages/Recipients";
+import Honorees from "../admin/pages/Honorees";
 
 function About() {
   return <h1>About Page</h1>;
@@ -51,7 +52,7 @@ export default function AppRoutes() {
           <Route path="categories" element={<Categories />} />
           <Route path="editions" element={<Editions />} />
           <Route path="recipients" element={<Recipients />} />
-          {/* <Route path="honorees" element={<Honorees />} /> */}
+          <Route path="honorees" element={<Honorees />} />
           {/* <Route path="gallery" element={<Gallery />} /> */}
           {/* <Route path="sponsors" element={<Sponsors />} /> */}
           {/* <Route path="speakers" element={<Speakers />} /> */}
