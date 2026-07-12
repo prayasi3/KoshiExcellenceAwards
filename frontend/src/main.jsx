@@ -5,6 +5,10 @@ import { AuthProvider } from "./admin/context/AuthContext";
 
 import App from "./App";
 import "./styles/theme.css";
+import "./index.css";
+
+import "@fontsource/inter";
+import "@fontsource/playfair-display";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

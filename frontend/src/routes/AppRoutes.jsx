@@ -48,7 +48,8 @@ export default function AppRoutes() {
       {/* Protected Admin Routes */}
       <Route element={<ProtectedRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
+        <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
 
           {/* Add more pages here later */}
           {/* <Route path="users" element={<Users />} /> */}

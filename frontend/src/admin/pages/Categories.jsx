@@ -3,6 +3,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
+import Card from "../components/Card";
+import PageHeader from "../components/PageHeader";
+import Button from "../components/Button";
+import LoadingSpinner from "../components/LoadingSpinner";
+import EmptyState from "../components/EmptyState";
+import StatusBadge from "../components/StatusBadge";
+import FormInput from "../components/FormInput";
+import FormTextarea from "../components/FormTextarea"; //
+
 import {
   getCategories,
   createCategory,
@@ -169,203 +178,248 @@ export default function Categories() {
   // =======================
 
   return (
-        <div className="p-6">
-      {/* =======================
-          Header
-      ======================== */}
+    <div className="p-6">
 
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Categories</h1>
+        {/* =======================
+            Header
+        ======================== */}
 
-        <button
-          onClick={handleAdd}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          + Add Category
-        </button>
-      </div>
+        <PageHeader
+            title="Categories"
+            buttonText="Add Category"
+            onAdd={handleAdd}
+        />
 
-      {/* =======================
-          Loading
-      ======================== */}
+        {/* =======================
+            Loading
+        ======================== */}
 
-      {loading ? (
-        <div className="text-center py-10 text-lg">
-          Loading categories...
-        </div>
-      ) : (
-        <>
-          {/* =======================
-              Categories Table
-          ======================== */}
+        {loading ? (
+            <LoadingSpinner />
+        ) : (
 
-          <div className="overflow-x-auto bg-white rounded-lg shadow">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-3 text-left">ID</th>
-                  <th className="border p-3 text-left">Category</th>
-                  <th className="border p-3 text-left">Description</th>
-                  <th className="border p-3 text-left">Status</th>
-                  <th className="border p-3 text-center">Actions</th>
-                </tr>
-              </thead>
+            <Card>
 
-              <tbody>
-                {categories.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      className="border p-6 text-center text-gray-500"
-                    >
-                      No categories found.
-                    </td>
-                  </tr>
-                ) : (
-                  categories.map((category) => (
-                    <tr key={category.id} className="hover:bg-gray-50">
-                      <td className="border p-3">{category.id}</td>
+                <div className="overflow-x-auto">
 
-                      <td className="border p-3 font-medium">
-                        {category.category_name}
-                      </td>
+                    <table className="w-full border-collapse">
 
-                      <td className="border p-3">
-                        {category.description || "-"}
-                      </td>
+                        <thead className="bg-gray-100">
 
-                      <td className="border p-3">
-                        {category.is_active ? (
-                          <span className="text-green-600 font-medium">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="text-red-600 font-medium">
-                            Inactive
-                          </span>
-                        )}
-                      </td>
+                            <tr>
 
-                      <td className="border p-3 text-center space-x-2">
-                        <button
-                          onClick={() => handleEdit(category)}
-                          className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
-                        >
-                          Edit
-                        </button>
+                                <th className="p-4 text-left">ID</th>
 
-                        <button
-                          onClick={() => handleDelete(category.id)}
-                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
+                                <th className="p-4 text-left">
+                                    Category
+                                </th>
+
+                                <th className="p-4 text-left">
+                                    Description
+                                </th>
+
+                                <th className="p-4 text-left">
+                                    Status
+                                </th>
+
+                                <th className="p-4 text-center">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {categories.length === 0 ? (
+
+                                <tr>
+
+                                    <td
+                                        colSpan={5}
+                                        className="py-10"
+                                    >
+
+                                        <EmptyState
+                                            title="No Categories"
+                                            description="Create your first category."
+                                            buttonText="Add Category"
+                                            onClick={handleAdd}
+                                        />
+
+                                    </td>
+
+                                </tr>
+
+                            ) : (
+
+                                categories.map((category) => (
+
+                                    <tr
+                                        key={category.id}
+                                        className="border-t hover:bg-gray-50 transition"
+                                    >
+
+                                        <td className="p-4">
+                                            {category.id}
+                                        </td>
+
+                                        <td className="p-4 font-semibold">
+                                            {category.category_name}
+                                        </td>
+
+                                        <td className="p-4 text-gray-600">
+                                            {category.description || "-"}
+                                        </td>
+
+                                        <td className="p-4">
+
+                                            <StatusBadge
+                                                status={
+                                                    category.is_active
+                                                        ? "active"
+                                                        : "inactive"
+                                                }
+                                            />
+
+                                        </td>
+
+                                        <td className="p-4">
+
+                                            <div className="flex justify-center gap-2">
+
+                                                <Button
+                                                    variant="secondary"
+                                                    onClick={() =>
+                                                        handleEdit(category)
+                                                    }
+                                                >
+                                                    Edit
+                                                </Button>
+
+                                                <Button
+                                                    variant="danger"
+                                                    onClick={() =>
+                                                        handleDelete(category.id)
+                                                    }
+                                                >
+                                                    Delete
+                                                </Button>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                ))
+
+                            )}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </Card>
+
+        )}
 
       {/* =======================
           Add / Edit Modal
       ======================== */}
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
-            <h2 className="text-2xl font-bold mb-6">
-              {editingCategory ? "Edit Category" : "Add Category"}
-            </h2>
+            {showModal && (
+              <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+              <div className="bg-white rounded-xl shadow-xl w-full max-w-xl p-8">
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              {/* Category Name */}
-
-              <div className="mb-4">
-                <label className="block mb-2 font-medium">
-                  Category Name
-                </label>
-
-                <input
-                  type="text"
-                  {...register("category_name")}
-                  className="w-full border rounded p-2"
-                />
-
-                {errors.category_name && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.category_name.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Description */}
-
-              <div className="mb-4">
-                <label className="block mb-2 font-medium">
-                  Description
-                </label>
-
-                <textarea
-                  rows={4}
-                  {...register("description")}
-                  className="w-full border rounded p-2"
-                />
-
-                {errors.description && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.description.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Active */}
-
-              <div className="mb-6 flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  {...register("is_active")}
-                />
-
-                <label>Active</label>
-              </div>
-
-              {/* Buttons */}
-
-              <div className="flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowModal(false);
-                    setEditingCategory(null);
-
-                    reset({
-                      category_name: "",
-                      description: "",
-                      is_active: true,
-                    });
-                  }}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                >
+                <h2 className="text-2xl font-bold text-[#0B1F3A] mb-6">
                   {editingCategory
-                    ? "Update Category"
-                    : "Create Category"}
-                </button>
+                    ? "Edit Category"
+                    : "Add Category"}
+                </h2>
+
+                <form onSubmit={handleSubmit(onSubmit)}>
+
+                  {/* Category Name */}
+
+                  <FormInput
+                    label="Category Name"
+                    type="text"
+                    placeholder="Enter category name"
+                    {...register("category_name")}
+                    error={errors.category_name?.message}
+                  />
+
+                  {/* Description */}
+
+                  <FormTextarea
+                    label="Description"
+                    placeholder="Enter description"
+                    rows={4}
+                    {...register("description")}
+                    error={errors.description?.message}
+                  />
+
+                  {/* Active */}
+
+                  <div className="mb-6">
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+
+                      <input
+                        type="checkbox"
+                        {...register("is_active")}
+                        className="w-5 h-5 accent-[#C9A84C]"
+                      />
+
+                      <span className="font-medium">
+                        Active
+                      </span>
+
+                    </label>
+
+                  </div>
+
+                  {/* Footer */}
+
+                  <div className="flex justify-end gap-3">
+
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        setShowModal(false);
+                        setEditingCategory(null);
+
+                        reset({
+                          category_name: "",
+                          description: "",
+                          is_active: true,
+                        });
+                      }}
+                    >
+                      Cancel
+                    </Button>
+
+                    <Button type="submit">
+
+                      {editingCategory
+                        ? "Update Category"
+                        : "Create Category"}
+
+                    </Button>
+
+                  </div>
+
+                </form>
+
               </div>
-            </form>
-          </div>
+
+            </div>
+          )}
+
         </div>
-      )}
-    </div>
-  );
+      );
 }
