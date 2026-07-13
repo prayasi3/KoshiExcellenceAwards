@@ -14,6 +14,7 @@ import { recipientRoutes } from "./routes/recipientRoutes.js";
 import { speakerRoutes } from "./routes/speakerRoutes.js";
 import { sponsorRoutes } from "./routes/sponsorRoutes.js";
 import { teamRoutes } from "./routes/teamRoutes.js";
+import { newsRoutes } from "./routes/newsRoutes.js";
 import { userRoutes } from "./routes/userRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
@@ -44,6 +45,7 @@ app.use("/api/honorees", honoreeRoutes);
 app.use("/api/sponsors", sponsorRoutes);
 app.use("/api/speakers", speakerRoutes);
 app.use("/api/teams", teamRoutes);
+app.use("/api/news", newsRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
 

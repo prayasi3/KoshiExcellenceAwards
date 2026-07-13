@@ -15,6 +15,8 @@ import Honorees from "../admin/pages/Honorees";
 import Sponsors from "../admin/pages/Sponsors";
 import Speakers from "../admin/pages/Speakers";
 import Teams from "../admin/pages/Teams";
+import Gallery from "../admin/pages/Gallery";
+import News from "../admin/pages/News";
 
 function About() {
   return <h1>About Page</h1>;
@@ -57,10 +59,11 @@ export default function AppRoutes() {
           <Route path="editions" element={<Editions />} />
           <Route path="recipients" element={<Recipients />} />
           <Route path="honorees" element={<Honorees />} />
-          {/* <Route path="gallery" element={<Gallery />} /> */}
+          <Route path="gallery" element={<Gallery />} />
           <Route path="sponsors" element={<Sponsors />} />
           <Route path="speakers" element={<Speakers />} />
-          <Route path="team" element={<Teams />} />
+          <Route path="teams" element={<Teams />} />
+          <Route path="news" element={<News />} />
         </Route>
       </Route>
     </Routes>

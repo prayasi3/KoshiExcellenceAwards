@@ -9,34 +9,38 @@ export const News = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
+
     title: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
+
     slug: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      unique: true,
     },
-    excerpt: {
-      type: DataTypes.TEXT,
-    },
+
     content: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT("long"),
+      allowNull: true,
     },
-    image_url: {
-      type: DataTypes.STRING,
+
+    featured_image: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
     },
-    is_published: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
+
     published_at: {
       type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW,
     },
   },
   {
     tableName: "news",
-    timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+    timestamps: false,
   }
 );
+
+export default News;
