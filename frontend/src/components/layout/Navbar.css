@@ -1,3 +1,4 @@
+/*
 .nav {
   background: var(--primary);
   color: var(--white);
@@ -18,7 +19,7 @@
   font-size: 18px;
 }
 
-/* Desktop links */
+// Desktop links
 .links {
   display: flex;
   gap: 18px;
@@ -34,7 +35,7 @@
   color: var(--secondary);
 }
 
-/* Mobile button */
+//Mobile button
 .menu-btn {
   display: none;
   background: none;
@@ -44,7 +45,7 @@
   cursor: pointer;
 }
 
-/* Responsive */
+/* Responsive
 @media (max-width: 768px) {
   .menu-btn {
     display: block;
@@ -65,3 +66,4 @@
     display: flex;
   }
 }
+ */

@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home";
+import PublicCategories from "../pages/Categories";
 
 // Admin
 import Login from "../admin/pages/Login";
@@ -35,6 +36,15 @@ export default function AppRoutes() {
         }
       />
 
+      /*<Route
+        path="/categories"
+        element={
+          <MainLayout>
+            <PublicCategories />
+          </MainLayout>
+        }
+      /> 
+
       <Route
         path="/about"
         element={
@@ -43,7 +53,7 @@ export default function AppRoutes() {
           </MainLayout>
         }
       />
-
+      
       {/* Login */}
       <Route path="/admin/login" element={<Login />} />
 

@@ -1,12 +1,37 @@
-:root {
-  --primary: #0B1F3A;   /* Navy */
-  --secondary: #D4AF37; /* Gold */
-  --white: #FFFFFF;
-  --text: #eaeaea;
-}
+:root{
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f8f9fb;
+  /* Primary */
+
+  --primary:#0B1F3A;
+  --primary-light:#162D50;
+
+  /* Gold */
+
+  --gold:#C9A84C;
+  --gold-light:#F5ECD0;
+
+  /* Neutral */
+
+  --background:#F2F4F7;
+  --text:#1A1A2E;
+  --white:#FFFFFF;
+
+  /* Radius */
+
+  --radius-sm:8px;
+  --radius-md:12px;
+  --radius-lg:18px;
+  --radius-pill:50px;
+
+  /* Shadows */
+
+  --shadow-sm:
+      0 2px 10px rgba(0,0,0,.05);
+
+  --shadow-md:
+      0 8px 25px rgba(0,0,0,.08);
+
+  --shadow-lg:
+      0 15px 40px rgba(0,0,0,.12);
+
 }

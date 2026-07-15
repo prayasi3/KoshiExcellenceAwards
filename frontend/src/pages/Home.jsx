@@ -1,9 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
-
 // ─── Data ─────────────────────────────────────────────────────────────────────
-
 const CATEGORIES = [
   { id: 1,  name: "Social Work",      icon: "🤝" },
   { id: 2,  name: "Sports",           icon: "🏆" },
