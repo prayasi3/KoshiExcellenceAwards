@@ -9,13 +9,12 @@ const getAuthConfig = () => ({
 });
 
 export const getEditions = async () => {
-  const response = await axios.get(API_URL, getAuthConfig());
-  return response.data.data.items;
-};
+  const response = await axios.get(
+    `${API_URL}?limit=100`,
+    getAuthConfig()
+  );
 
-export const getEdition = async (id) => {
-  const response = await axios.get(`${API_URL}/${id}`, getAuthConfig());
-  return response.data.data;
+  return response.data.data.items;
 };
 
 export const createEdition = async (data) => {
@@ -33,6 +32,9 @@ export const updateEdition = async (id, data) => {
 };
 
 export const deleteEdition = async (id) => {
-  const response = await axios.delete(`${API_URL}/${id}`, getAuthConfig());
+  const response = await axios.delete(
+    `${API_URL}/${id}`,
+    getAuthConfig()
+  );
   return response.data;
 };

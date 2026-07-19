@@ -3,35 +3,39 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
+import Card from "../components/Card";
+import PageHeader from "../components/PageHeader";
+import Button from "../components/Button";
+import LoadingSpinner from "../components/LoadingSpinner";
+import EmptyState from "../components/EmptyState";
+import StatusBadge from "../components/StatusBadge";
+import FormInput from "../components/FormInput";
+import FormSelect from "../components/FormSelect.jsx";
+import FormTextarea from "../components/FormTextarea"; //
+
 import {
   getEditions,
   createEdition,
   updateEdition,
   deleteEdition,
-} from "../services/editionService";
+} from "../services/EditionService";
 
 // =======================
 // Zod Schema
 // =======================
 
 const editionSchema = z.object({
-  title: z
-    .string()
-    .min(2, "Edition title must be at least 2 characters"),
+  title: z.string().min(2, "Title must be at least 2 characters"),
 
-  year: z.coerce
-  .number({
-    required_error: "Year is required",
-  })
-  .int("Year must be a whole number")
-  .min(1900, "Year must be at least 1900")
-  .max(2100, "Year must be at most 2100"),
+  slug: z.string().min(2, "Slug must be at least 2 characters"),
+
+  year: z.string().regex(/^\d{4}$/, "Year must be a valid 4-digit year"),
 
   venue: z.string().optional(),
 
   event_date: z.string().optional(),
 
-  is_active: z.boolean(),
+  status: z.enum(["upcoming", "ongoing", "completed"]),
 });
 
 export default function Editions() {
@@ -59,10 +63,11 @@ export default function Editions() {
 
     defaultValues: {
       title: "",
+      slug: "",
       year: "",
       venue: "",
       event_date: "",
-      is_active: true,
+      status: "upcoming",
     },
   });
 
@@ -98,10 +103,11 @@ export default function Editions() {
 
     reset({
       title: "",
+      slug: "",
       year: "",
       venue: "",
       event_date: "",
-      is_active: true,
+      status: "upcoming",
     });
 
     setShowModal(true);
@@ -115,11 +121,14 @@ export default function Editions() {
     setEditingEdition(edition);
 
     reset({
-      title: edition.title || "",
-      year: edition.year || "",
-        venue: edition.venue || "",
-        event_date: edition.event_date ? new Date(edition.event_date).toISOString().split("T")[0] : "",
-      is_active: edition.is_active,
+      title: edition.title,
+      slug: edition.slug,
+      year: edition.year?.toString() || "",
+      venue: edition.venue || "",
+      event_date: edition.event_date
+        ? edition.event_date.split("T")[0]
+        : "",
+      status: edition.status,
     });
 
     setShowModal(true);
@@ -143,10 +152,11 @@ export default function Editions() {
 
       reset({
         title: "",
+        slug: "",
         year: "",
         venue: "",
         event_date: "",
-        is_active: true,
+        status: "upcoming",
       });
 
       setEditingEdition(null);
@@ -181,245 +191,238 @@ export default function Editions() {
       alert("Failed to delete edition.");
     }
   };
-
   // =======================
   // JSX starts here
   // =======================
 
   return (
-        <div className="p-6">
-      {/* =======================
-          Header
-      ======================== */}
+  <div className="p-6">
+    {/* =======================
+        Header
+    ======================== */}
 
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Editions</h1>
+    <PageHeader
+      title="Editions"
+      buttonText="Add Edition"
+      onAdd={handleAdd}
+    />
 
-        <button
-          onClick={handleAdd}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          + Add Edition
-        </button>
-      </div>
+    {/* =======================
+        Loading
+    ======================== */}
 
-      {/* =======================
-          Loading
-      ======================== */}
+    {loading ? (
+      <LoadingSpinner />
+    ) : (
+      <Card>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-4 text-left">ID</th>
 
-      {loading ? (
-        <div className="text-center py-10 text-lg">
-          Loading editions...
-        </div>
-      ) : (
-        <>
-          {/* =======================
-              Categories Table
-          ======================== */}
+                <th className="p-4 text-left">
+                  Title
+                </th>
 
-          <div className="overflow-x-auto bg-white rounded-lg shadow">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-100">
+                <th className="p-4 text-left">
+                  Year
+                </th>
+
+                <th className="p-4 text-left">
+                  Venue
+                </th>
+
+                <th className="p-4 text-left">
+                  Event Date
+                </th>
+
+                <th className="p-4 text-left">
+                  Status
+                </th>
+
+                <th className="p-4 text-center">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {editions.length === 0 ? (
                 <tr>
-                  <th className="border p-3 text-left">ID</th>
-                  <th className="border p-3 text-left">Title</th>
-                  <th className="border p-3 text-left">Year</th>
-                  <th className="border p-3 text-left">Venue</th>
-                  <th className="border p-3 text-center">Event Date</th>
-                  <th className="border p-3 text-center">Status</th>
-                    <th className="border p-3 text-center">Actions</th>
+                  <td
+                    colSpan={7}
+                    className="py-10"
+                  >
+                    <EmptyState
+                      title="No Editions"
+                      description="Create your first edition."
+                      buttonText="Add Edition"
+                      onClick={handleAdd}
+                    />
+                  </td>
                 </tr>
-              </thead>
-
-              <tbody>
-                {editions.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      className="border p-6 text-center text-gray-500"
-                    >
-                      No editions found.
+              ) : (
+                editions.map((edition) => (
+                  <tr
+                    key={edition.id}
+                    className="border-t hover:bg-gray-50 transition"
+                  >
+                    <td className="p-4">
+                      {edition.id}
                     </td>
-                  </tr>
-                ) : (
-                  editions.map((edition) => (
-                    <tr key={edition.id} className="hover:bg-gray-50">
-                      <td className="border p-3">{edition.id}</td>
 
-                      <td className="border p-3 font-medium">
-                        {edition.title || "-"}
-                      </td>
+                    <td className="p-4 font-semibold">
+                      {edition.title}
+                    </td>
 
-                      <td className="border p-3">
-                        {edition.year || "-"}
-                      </td>
+                    <td className="p-4">
+                      {edition.year}
+                    </td>
 
-                      <td className="border p-3">
-                        {edition.venue || "-"}
-                      </td>
+                    <td className="p-4 text-gray-600">
+                      {edition.venue || "-"}
+                    </td>
 
-                      <td className="border p-3 text-center">
-                        {edition.event_date ? new Date(edition.event_date).toLocaleDateString() : "-"}
-                      </td>
+                    <td className="p-4">
+                      {edition.event_date || "-"}
+                    </td>
 
-                      <td className="border p-3">
-                        {edition.is_active ? (
-                          <span className="text-green-600 font-medium">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="text-red-600 font-medium">
-                            Inactive
-                          </span>
-                        )}
-                      </td>
+                    <td className="p-4">
+                      <StatusBadge status={edition.status} />
+                    </td>
 
-                      <td className="border p-3 text-center space-x-2">
-                        <button
-                          onClick={() => handleEdit(edition)}
-                          className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                    <td className="p-4">
+                      <div className="flex justify-center gap-2">
+                        <Button
+                          variant="secondary"
+                          onClick={() =>
+                            handleEdit(edition)
+                          }
                         >
                           Edit
-                        </button>
+                        </Button>
 
-                        <button
-                          onClick={() => handleDelete(edition.id)}
-                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                        <Button
+                          variant="danger"
+                          onClick={() =>
+                            handleDelete(edition.id)
+                          }
                         >
                           Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
-
-      {/* =======================
-          Add / Edit Modal
-      ======================== */}
-
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
-            <h2 className="text-2xl font-bold mb-6">
-              {editingEdition ? "Edit Edition" : "Add Edition"}
-            </h2>
-
-            <form onSubmit={handleSubmit(onSubmit)}>
-              {/* Edition Title */}
-
-              <div className="mb-4">
-                <label className="block mb-2 font-medium">
-                  Edition Title
-                </label>
-
-                <input
-                  type="text"
-                  {...register("edition_title")}
-                  className="w-full border rounded p-2"
-                />
-
-                {errors.edition_title && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.edition_title.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Year */}
-  <div>
-    <label className="block mb-1 font-medium">Year</label>
-    <input
-      type="number"
-      {...register("year")}
-      className="w-full border rounded p-2"
-      placeholder="2026"
-    />
-    {errors.year && (
-      <p className="text-red-500 text-sm">{errors.year.message}</p>
-    )}
-  </div>
-
-  {/* Venue */}
-  <div>
-    <label className="block mb-1 font-medium">Venue</label>
-    <input
-      {...register("venue", {
-        required: "Venue is required",
-      })}
-      className="w-full border rounded p-2"
-      placeholder="Biratnagar"
-    />
-    {errors.venue && (
-      <p className="text-red-500 text-sm">{errors.venue.message}</p>
-    )}
-  </div>
-
-            {/* Event Date */}
-            <div>
-                <label className="block mb-1 font-medium">Event Date</label>
-                <input
-                type="date"
-                {...register("event_date", {
-                    required: "Event Date is required",
-                })}
-                className="w-full border rounded p-2"
-                />
-                {errors.event_date && (
-                <p className="text-red-500 text-sm">{errors.event_date.message}</p>
-                )}
-            </div>
-
-              {/* Active */}
-
-              <div className="mb-6 flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  {...register("is_active")}
-                />
-
-                <label>Active</label>
-              </div>
-
-              {/* Buttons */}
-
-              <div className="flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowModal(false);
-                    setEditingEdition(null);
-
-                    reset({
-                      edition_title: "",
-                      year: "",
-                      venue: "",
-                      event_date: "",
-                      is_active: true,
-                    });
-                  }}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                >
-                  {editingEdition
-                    ? "Update Edition"
-                    : "Create Edition"}
-                </button>
-              </div>
-            </form>
-          </div>
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
-    </div>
-  );
+      </Card>
+    )}
+
+    {/* =======================
+        Add / Edit Modal
+    ======================== */}
+
+    {showModal && (
+      <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-xl p-8">
+          <h2 className="text-2xl font-bold text-[#0B1F3A] mb-6">
+            {editingEdition
+              ? "Edit Edition"
+              : "Add Edition"}
+          </h2>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FormInput
+              label="Title"
+              type="text"
+              placeholder="Enter edition title"
+              {...register("title")}
+              error={errors.title?.message}
+            />
+
+            <FormInput
+              label="Slug"
+              type="text"
+              placeholder="Enter slug"
+              {...register("slug")}
+              error={errors.slug?.message}
+            />
+
+            <FormInput
+              label="Year"
+              type="text"
+              placeholder="2025"
+              {...register("year")}
+              error={errors.year?.message}
+            />
+
+            <FormInput
+              label="Venue"
+              type="text"
+              placeholder="Enter venue"
+              {...register("venue")}
+              error={errors.venue?.message}
+            />
+
+            <FormInput
+              label="Event Date"
+              type="date"
+              {...register("event_date")}
+              error={errors.event_date?.message}
+            />
+
+            <FormSelect
+              label="Status"
+              {...register("status")}
+              error={errors.status?.message}
+            >
+              <option value="upcoming">
+                Upcoming
+              </option>
+
+              <option value="ongoing">
+                Ongoing
+              </option>
+
+              <option value="completed">
+                Completed
+              </option>
+            </FormSelect>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setShowModal(false);
+                  setEditingEdition(null);
+
+                  reset({
+                    title: "",
+                    slug: "",
+                    year: "",
+                    venue: "",
+                    event_date: "",
+                    status: "upcoming",
+                  });
+                }}
+              >
+                Cancel
+              </Button>
+
+              <Button type="submit">
+                {editingEdition
+                  ? "Update Edition"
+                  : "Create Edition"}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
+  </div>
+);
 }
