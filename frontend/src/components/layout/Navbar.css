@@ -1,69 +1,265 @@
-/*
-.nav {
-  background: var(--primary);
-  color: var(--white);
-  padding: 12px 20px;
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap");
+
+:root{
+    --navy:#0B1F3A;
+    --gold:#D4AF37;
 }
 
-.nav-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 10px;
+/* ========================= */
+
+.navbar{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:90px;
+
+    background:var(--navy);
+
+    z-index:1000;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.18);
 }
 
-.logo {
-  color: var(--secondary);
-  font-weight: bold;
-  font-size: 18px;
+/* ========================= */
+
+.navbar-container{
+
+    max-width:1600px;
+
+    margin:auto;
+
+    padding:0 48px;
+
+    height:90px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
 }
 
-// Desktop links
-.links {
-  display: flex;
-  gap: 18px;
+/* ========================= */
+
+.logo{
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
 }
 
-.links a {
-  color: var(--white);
-  text-decoration: none;
-  transition: 0.2s;
+.logo-image{
+
+    height:92px;
+
+    width:auto;
+
+    display:block;
+
+    transition:.3s;
 }
 
-.links a:hover {
-  color: var(--secondary);
+.logo:hover .logo-image{
+
+    transform:translateY(-2px);
 }
 
-//Mobile button
-.menu-btn {
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 22px;
-  cursor: pointer;
+/* ========================= */
+
+.nav-links{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:42px;
 }
 
-/* Responsive
-@media (max-width: 768px) {
-  .menu-btn {
-    display: block;
-  }
+.nav-link{
 
-  .links {
-    position: absolute;
-    top: 60px;
-    right: 0;
-    background: var(--primary);
-    flex-direction: column;
-    width: 200px;
-    padding: 10px;
-    display: none;
-  }
+    color:white;
 
-  .links.active {
-    display: flex;
-  }
+    text-decoration:none;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-size:15px;
+
+    font-weight:800;
+
+    letter-spacing:.06em;
+
+    transition:.25s;
 }
- */
+
+.nav-link:hover{
+
+    color:var(--gold);
+}
+
+.nav-link.active{
+
+    color:var(--gold);
+}
+
+/* ========================= */
+
+.contact-btn{
+
+    width:180px;
+
+    height:46px;
+
+    border-radius:999px;
+
+    background:linear-gradient(#e7c961,#d3a92d);
+
+    color:white;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-weight:700;
+
+    text-decoration:none;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    box-shadow:0 8px 18px rgba(212,175,55,.35);
+
+    transition:.25s;
+}
+
+.contact-btn:hover{
+
+    transform:translateY(-2px);
+
+    background:linear-gradient(#edd26d,#d7ae35);
+}
+
+/* ========================= */
+
+.mobile-btn{
+
+    display:none;
+
+    background:none;
+
+    border:none;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+/* ========================= */
+
+.mobile-menu{
+
+    position:fixed;
+
+    top:90px;
+
+    left:0;
+
+    width:100%;
+
+    background:var(--navy);
+
+    display:flex;
+
+    flex-direction:column;
+
+    padding:18px 0;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.25);
+}
+
+.mobile-link{
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:16px 36px;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-weight:700;
+}
+
+.mobile-link.active{
+
+    color:var(--gold);
+}
+
+.mobile-contact{
+
+    margin:20px 24px;
+
+    height:46px;
+
+    border-radius:999px;
+
+    background:var(--gold);
+
+    color:white;
+
+    text-decoration:none;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-family:"Montserrat",sans-serif;
+
+    font-weight:700;
+}
+
+/* ========================= */
+
+@media (max-width:1100px){
+
+    .nav-links{
+
+        display:none;
+    }
+
+    .contact-btn{
+
+        display:none;
+    }
+
+    .mobile-btn{
+
+        display:block;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .navbar-container{
+
+        padding:0 24px;
+    }
+
+    .logo-image{
+
+        height:72px;
+    }
+
+}

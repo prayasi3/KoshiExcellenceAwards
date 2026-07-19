@@ -54,6 +54,29 @@ body{
   -moz-osx-font-smoothing:grayscale;
 }
 
+::selection {
+  background: var(--color-primary-gold);
+  color: var(--color-primary-navy);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e9edf2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b89336;
+  border: 3px solid #e9edf2;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-navy);
+}
+
 *,
 *::before,
 *::after{
@@ -83,6 +106,11 @@ button{
 a{
   color:inherit;
   text-decoration:none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-gold);
+  outline-offset: 3px;
 }
 
 h1,

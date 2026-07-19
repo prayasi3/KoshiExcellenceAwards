@@ -1,120 +1,97 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import Container from "./Container";
+import "./Navbar.css";
+
+import logo from "../../assets/trophy-transparent.svg";
 
 const navLinks = [
-  { name: "Home", path: "/" },
-  { name: "Recipients", path: "/recipients" },
-  { name: "Categories", path: "/categories" },
-  { name: "Honorees", path: "/honorees" },
-  { name: "Speakers", path: "/speakers" },
-  { name: "Sponsors", path: "/sponsors" },
-  { name: "Gallery", path: "/gallery" },
-  { name: "News", path: "/news" },
-  { name: "About", path: "/about" },
+  { name: "HOME", path: "/" },
+  { name: "RECIPIENTS", path: "/recipients" },
+  { name: "CATEGORIES", path: "/categories" },
+  { name: "HONOREES", path: "/honorees" },
+  { name: "TEAMS", path: "/teams" },
+  { name: "SPEAKERS", path: "/speakers" },
+  { name: "SPONSORS", path: "/sponsors" },
+  { name: "GALLERY", path: "/gallery" },
+  { name: "NEWS", path: "/news" },
 ];
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-[#0B1F3A] shadow-lg"
-            : "bg-[#0B1F3A]/95 backdrop-blur"
-        }`}
-      >
-        <Container>
-          <div className="flex h-20 items-center justify-between">
-            {/* Logo */}
+      <header className="navbar">
+        <div className="navbar-container">
+          {/* Logo */}
+          <NavLink to="/" className="logo">
+            <img
+              src={logo}
+              alt="Koshi Excellence Award"
+              className="logo-image"
+            />
+          </NavLink>
+
+          {/* Desktop Navigation */}
+          <nav className="nav-links">
+            {navLinks.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.path}
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                {item.name}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Contact Button */}
+          <NavLink to="/contact" className="contact-btn">
+            Contact Us
+          </NavLink>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="mobile-btn"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Close Menu" : "Open Menu"}
+          >
+            {mobileOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileOpen && (
+          <div className="mobile-menu">
+            {navLinks.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.path}
+                className={({ isActive }) =>
+                  isActive ? "mobile-link active" : "mobile-link"
+                }
+                onClick={() => setMobileOpen(false)}
+              >
+                {item.name}
+              </NavLink>
+            ))}
 
             <NavLink
-              to="/"
-              className="text-2xl font-bold text-white tracking-wide"
+              to="/contact"
+              className="mobile-contact"
+              onClick={() => setMobileOpen(false)}
             >
-              <span className="text-[#C9A84C]">Koshi</span> Excellence
+              Contact Us
             </NavLink>
-
-            {/* Desktop */}
-
-            <nav className="hidden lg:flex items-center gap-8">
-              {navLinks.map((item) => (
-                <NavLink
-                  key={item.name}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `relative pb-1 text-sm uppercase tracking-wider font-medium transition-colors duration-300 ${
-                      isActive
-                        ? "text-[#C9A84C]"
-                        : "text-[#C9A84C] hover:text-white"
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      {item.name}
-
-                      {isActive && (
-                        <span className="absolute left-0 -bottom-1 h-[2px] w-full bg-[#C9A84C]" />
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              ))}
-            </nav>
-
-            {/* Mobile Button */}
-
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden text-[#C9A84C]"
-            >
-              {mobileOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
           </div>
-        </Container>
+        )}
       </header>
 
-      {/* Mobile Menu */}
-
-      {mobileOpen && (
-        <div className="fixed top-20 left-0 right-0 bg-[#0B1F3A] lg:hidden z-40 shadow-xl">
-          {navLinks.map((item) => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) =>
-                `block px-6 py-4 border-b border-white/10 transition-colors duration-300 ${
-                  isActive
-                    ? "text-white bg-[#C9A84C]/10"
-                    : "text-[#C9A84C] hover:bg-white/5 hover:text-white"
-                }`
-              }
-            >
-              {item.name}
-            </NavLink>
-          ))}
-        </div>
-      )}
-
-      {/* Spacer */}
-
-      <div className="h-20" />
+      {/* Spacer to prevent content from hiding behind the fixed navbar */}
+      <div style={{ height: "90px" }} />
     </>
   );
 }

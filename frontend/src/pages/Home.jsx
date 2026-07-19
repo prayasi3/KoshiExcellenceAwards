@@ -1,5 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import trophy from "../assets/trophy-transparent.svg";
+import organizerLogo from "../assets/organizer.png";
+import managerLogo from "../assets/manager.png";
+import pradesKhabarLogo from "../assets/prades-khabar.png";
 import "./Home.css";
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -96,38 +100,29 @@ export default function Home() {
         </svg>
 
         <div className="hero-content">
-          <p className="hero-eyebrow">KOSHI PROVINCE · NEPAL · 2026</p>
-
-          <h1 className="hero-title">
-            <span className="hero-title__line">Koshi</span>
-            <span className="hero-title__accent">Excellence</span>
-            <span className="hero-title__line">Award</span>
-          </h1>
-
-          <p className="hero-sub">
-            Recognising the achievers who shape Koshi Province across industry,
-            culture, and community.
-          </p>
-
-          <div className="hero-meta">
-            <div className="hero-meta__item">
-              <span className="hero-meta__icon">📅</span>
-              <span>March 21, 2026</span>
-            </div>
-            <div className="hero-divider" />
-            <div className="hero-meta__item">
-              <span className="hero-meta__icon">📍</span>
-              <span>Soaltee Westend, Itahari</span>
-            </div>
-            <div className="hero-divider" />
-            <div className="hero-meta__item">
-              <span className="hero-meta__icon">🏅</span>
-              <span>16 Award Categories</span>
+          <div className="hero-trophy-wrap" aria-hidden="true">
+            <div className="hero-trophy-crop">
+              <img className="hero-trophy" src={trophy} alt="" />
             </div>
           </div>
 
-          <div className="hero-ctas">
-            <Link to="/gallery"     className="btn btn--secondary">View Gallery</Link>
+          <div className="hero-copy">
+            <p className="hero-eyebrow">THE MOST PRESTIGIOUS AWARD OF KOSHI PROVINCE</p>
+
+            <h1 className="hero-title">
+              <span className="hero-title__line">Koshi</span>
+              <span className="hero-title__accent">Excellence</span>
+              <span className="hero-title__line">Award</span>
+            </h1>
+
+            <p className="hero-sub">
+              Recognising the achievers who shape Koshi Province across industry,
+              culture, and community.
+            </p>
+
+            <div className="hero-ctas">
+              <Link to="/gallery" className="btn btn--primary">View Gallery</Link>
+            </div>
           </div>
         </div>
       </header>
@@ -262,12 +257,14 @@ export default function Home() {
           </div>
           <div className="organiser-grid">
             {[
-              { abbr: "NMF", name: "Nayan Media Foundation", role: "Organising Body" },
-              { abbr: "KFL", name: "Kafals",                 role: "Event Management" },
-              { abbr: "PK",  name: "Prades Khabar",          role: "Media Partner" },
+              { abbr: "NMF", name: "Nayan Media Foundation", role: "Organising Body", logo: organizerLogo },
+              { abbr: "KFL", name: "Kafals",                 role: "Event Management", logo: managerLogo },
+              { abbr: "PK",  name: "Prades Khabar",          role: "Media Partner", logo: pradesKhabarLogo },
             ].map((org) => (
               <div key={org.abbr} className="organiser-card">
-                <div className="organiser-card__icon">{org.abbr}</div>
+                <div className="organiser-card__logo-wrap">
+                  <img className="organiser-card__logo" src={org.logo} alt={`${org.name} logo`} />
+                </div>
                 <h3 className="organiser-card__name">{org.name}</h3>
                 <p className="organiser-card__role">{org.role}</p>
               </div>

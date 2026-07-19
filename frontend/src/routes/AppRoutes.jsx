@@ -9,6 +9,7 @@ import PublicSpeakers from "../pages/Speakers";
 import PublicSponsors from "../pages/Sponsors";
 import PublicGallery from "../pages/Gallery";
 import PublicNews from "../pages/News";
+import PublicTeams from "../pages/Teams"
 
 
 // Admin
@@ -60,6 +61,16 @@ export default function AppRoutes() {
           </MainLayout>
         }
       />
+
+        <Route
+        path="/teams"
+        element={
+          <MainLayout>
+            <PublicTeams />
+          </MainLayout>
+        }
+      />
+
 
       <Route
         path="/speakers"
