@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { getEditions } from "../services/editionService";
 
 import Card from "../components/Card";
 import PageHeader from "../components/PageHeader";
@@ -10,7 +11,8 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
 import StatusBadge from "../components/StatusBadge";
 import FormInput from "../components/FormInput";
-import FormTextarea from "../components/FormTextarea"; //
+import FormTextarea from "../components/FormTextarea";
+import FormSelect from "../components/FormSelect";
 
 import {
   getGalleryItems,
@@ -47,13 +49,11 @@ export default function Gallery() {
   // =======================
 
   const [galleryItems, setGalleryItems] = useState([]);
+  const [editions, setEditions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-
-  // If you need to populate the edition dropdown
-  const [editions, setEditions] = useState([]);
 
   // =======================
   // React Hook Form
@@ -94,9 +94,19 @@ export default function Gallery() {
     }
   };
 
+  const fetchEditions = async () => {
+  try {
+    const data = await getEditions();
+    setEditions(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   useEffect(() => {
     fetchGalleryItems();
-  }, []);
+    fetchEditions();
+}, []);
 
   // =======================
   // Open Add Modal

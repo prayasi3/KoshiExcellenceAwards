@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { getEditions } from "../services/editionService";
 
 import {
   getSponsors,
@@ -52,6 +53,7 @@ export default function Sponsors() {
   // =======================
 
   const [sponsors, setSponsors] = useState([]);
+  const [editions, setEditions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -98,9 +100,19 @@ export default function Sponsors() {
     }
   };
 
+  const fetchEditions = async () => {
+  try {
+    const data = await getEditions();
+    setEditions(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   useEffect(() => {
     fetchSponsors();
-  }, []);
+    fetchEditions();
+}, []);
 
   // =======================
   // Open Add Modal
@@ -336,11 +348,17 @@ export default function Sponsors() {
                 Edition ID
               </label>
 
-              <input
-                type="number"
+              <select
                 {...register("edition_id")}
                 className="w-full border rounded p-2"
-              />
+              >
+              <option value="">Select Edition</option>
+                {editions.map((edition) => (
+              <option key={edition.id} value={edition.id}>
+              {edition.title} ({edition.year})
+              </option>
+            ))}
+            </select>
 
               {errors.edition_id && (
                 <p className="text-red-500 text-sm mt-1">

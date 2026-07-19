@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { getEditions } from "../services/editionService";
 
 import {
   getSpeakers,
@@ -42,6 +43,7 @@ export default function Speakers() {
   // =======================
 
   const [speakers, setSpeakers] = useState([]);
+  const [editions, setEditions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -74,7 +76,15 @@ export default function Speakers() {
   // =======================
   // Fetch Speakers
   // =======================
-
+  
+  const fetchEditions = async () => {
+  try {
+    const data = await getEditions();
+    setEditions(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
   const fetchSpeakers = async () => {
     try {
       setLoading(true);
@@ -92,7 +102,8 @@ export default function Speakers() {
 
   useEffect(() => {
     fetchSpeakers();
-  }, []);
+    fetchEditions();
+}, []);
 
   // =======================
   // Open Add Modal
@@ -307,8 +318,9 @@ export default function Speakers() {
     ======================== */}
 
     {showModal && (
-      <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-        <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white shadow-lg">
+          <div className="p-6">
           <h2 className="text-2xl font-bold mb-6">
             {editingSpeaker ? "Edit Speaker" : "Add Speaker"}
           </h2>
@@ -321,11 +333,18 @@ export default function Speakers() {
                 Edition ID
               </label>
 
-              <input
-                type="number"
-                {...register("edition_id")}
-                className="w-full border rounded p-2"
-              />
+              <select
+    {...register("edition_id")}
+    className="w-full border rounded p-2"
+>
+    <option value="">Select Edition</option>
+
+    {editions.map((edition) => (
+        <option key={edition.id} value={edition.id}>
+            {edition.title} ({edition.year})
+        </option>
+    ))}
+</select>
 
               {errors.edition_id && (
                 <p className="text-red-500 text-sm mt-1">
@@ -458,7 +477,7 @@ export default function Speakers() {
 
             {/* Buttons */}
 
-            <div className="flex justify-end gap-3">
+            <div className="sticky bottom-0 flex justify-end gap-3 bg-white pt-4 border-t">
               <button
                 type="button"
                 onClick={() => {
@@ -493,6 +512,7 @@ export default function Speakers() {
           </form>
         </div>
       </div>
+    </div>
     )}
   </div>
 );

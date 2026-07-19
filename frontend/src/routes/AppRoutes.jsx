@@ -3,6 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home";
 import PublicCategories from "../pages/Categories";
+import PublicRecipients from "../pages/Recipients";
+import PublicHonorees from "../pages/Honorees";
+import PublicSpeakers from "../pages/Speakers";
+
 
 // Admin
 import Login from "../admin/pages/Login";
@@ -36,11 +40,38 @@ export default function AppRoutes() {
         }
       />
 
-      /*<Route
+      <Route
         path="/categories"
         element={
           <MainLayout>
             <PublicCategories />
+          </MainLayout>
+        }
+      /> 
+
+      <Route
+        path="/honorees"
+        element={
+          <MainLayout>
+            <PublicHonorees />
+          </MainLayout>
+        }
+      />
+
+      <Route
+        path="/speakers"
+        element={
+          <MainLayout>
+            <PublicSpeakers />
+          </MainLayout>
+        }
+      />
+
+      <Route
+        path="/recipients"
+        element={
+          <MainLayout>
+            <PublicRecipients />
           </MainLayout>
         }
       /> 

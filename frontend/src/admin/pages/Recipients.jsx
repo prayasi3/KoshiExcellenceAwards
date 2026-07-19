@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { getEditions } from "../services/editionService";
 
 import {
   getRecipients,
@@ -56,6 +57,7 @@ export default function Recipients() {
   // =======================
 
   const [recipients, setRecipients] = useState([]);
+  const [editions, setEditions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -102,9 +104,19 @@ export default function Recipients() {
     }
   };
 
+  const fetchEditions = async () => {
+  try {
+    const data = await getEditions();
+    setEditions(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   useEffect(() => {
     fetchRecipients();
-  }, []);
+    fetchEditions();
+}, []);
 
   // =======================
   // Open Add Modal
@@ -310,8 +322,9 @@ export default function Recipients() {
     {/* Add / Edit Modal */}
 
     {showModal && (
-      <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-        <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white shadow-lg">
+          <div className="p-6">
           <h2 className="text-2xl font-bold mb-6">
             {editingRecipient ? "Edit Recipient" : "Add Recipient"}
           </h2>
@@ -324,11 +337,18 @@ export default function Recipients() {
                 Edition ID
               </label>
 
-              <input
-                type="number"
-                {...register("edition_id", { valueAsNumber: true })}
+              <select
+                {...register("edition_id")}
                 className="w-full border rounded p-2"
-              />
+            >
+                <option value="">Select Edition</option>
+
+                {editions.map((edition) => (
+                    <option key={edition.id} value={edition.id}>
+                        {edition.title} ({edition.year})
+                    </option>
+                ))}
+            </select>
 
               {errors.edition_id && (
                 <p className="text-red-500 text-sm">
@@ -439,7 +459,7 @@ export default function Recipients() {
 
             {/* Buttons */}
 
-            <div className="flex justify-end gap-3">
+            <div className="sticky bottom-0 flex justify-end gap-3 bg-white pt-4 border-t">
               <button
                 type="button"
                 onClick={() => {
@@ -470,8 +490,9 @@ export default function Recipients() {
               </button>
             </div>
           </form>
+            </div>
+          </div>
         </div>
-      </div>
     )}
   </div>
 );
