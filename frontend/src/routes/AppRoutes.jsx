@@ -6,6 +6,9 @@ import PublicCategories from "../pages/Categories";
 import PublicRecipients from "../pages/Recipients";
 import PublicHonorees from "../pages/Honorees";
 import PublicSpeakers from "../pages/Speakers";
+import PublicSponsors from "../pages/Sponsors";
+import PublicGallery from "../pages/Gallery";
+import PublicNews from "../pages/News";
 
 
 // Admin
@@ -75,6 +78,10 @@ export default function AppRoutes() {
           </MainLayout>
         }
       /> 
+
+      <Route path="/sponsors" element={<MainLayout><PublicSponsors /></MainLayout>} />
+      <Route path="/gallery" element={<MainLayout><PublicGallery /></MainLayout>} />
+      <Route path="/news" element={<MainLayout><PublicNews /></MainLayout>} />
 
       <Route
         path="/about"
