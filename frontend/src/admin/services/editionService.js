@@ -38,3 +38,8 @@ export const deleteEdition = async (id) => {
   );
   return response.data;
 };
+
+export const getEditionCategories = async (id) => {
+  const response = await axios.get(`${API_URL}/${id}/categories`, getAuthConfig());
+  return response.data.data;
+};

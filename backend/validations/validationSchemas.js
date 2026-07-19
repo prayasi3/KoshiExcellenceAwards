@@ -124,6 +124,7 @@ const editionBaseSchema = z.object({
   venue: optionalString(),
   event_date: optionalDateOnly,
   status: z.enum(["upcoming", "ongoing", "completed"]).optional(),
+  category_ids: z.array(z.coerce.number().int().positive()).optional(),
 });
 
 export const editionSchemas = {

@@ -3,6 +3,7 @@ import express from "express";
 import {
   getAllEditions,
   getEditionById,
+  getAssignedCategories,
   createEdition,
   updateEdition,
   deleteEdition,
@@ -18,6 +19,7 @@ const router = express.Router();
 const requireAdmin = [protect, authorizeRoles(["admin", "super_admin"])];
 
 router.get("/", getAllEditions);
+router.get("/:id/categories", validateParams(idParamSchema), getAssignedCategories);
 router.get("/:id", validateParams(idParamSchema), getEditionById);
 router.post("/", requireAdmin, validateBody(editionSchemas.create), createEdition);
 router.put(

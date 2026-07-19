@@ -18,7 +18,9 @@ import {
   createEdition,
   updateEdition,
   deleteEdition,
-} from "../services/EditionService";
+  getEditionCategories,
+} from "../services/editionService";
+import { getCategories } from "../services/categoryService";
 
 // =======================
 // Zod Schema
@@ -44,6 +46,8 @@ export default function Editions() {
   // =======================
 
   const [editions, setEditions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -92,6 +96,7 @@ export default function Editions() {
 
   useEffect(() => {
     fetchEditions();
+    getCategories().then(setCategories).catch((err) => console.error("Failed to load categories", err));
   }, []);
 
   // =======================
@@ -100,6 +105,7 @@ export default function Editions() {
 
   const handleAdd = () => {
     setEditingEdition(null);
+    setSelectedCategoryIds([]);
 
     reset({
       title: "",
@@ -117,8 +123,17 @@ export default function Editions() {
   // Open Edit Modal
   // =======================
 
-  const handleEdit = (edition) => {
+  const handleEdit = async (edition) => {
     setEditingEdition(edition);
+
+    try {
+      const data = await getEditionCategories(edition.id);
+      setSelectedCategoryIds(data.categories || []);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load assigned categories.");
+      return;
+    }
 
     reset({
       title: edition.title,
@@ -140,12 +155,13 @@ export default function Editions() {
 
   const onSubmit = async (data) => {
     try {
+      const payload = { ...data, category_ids: selectedCategoryIds };
       if (editingEdition) {
-        await updateEdition(editingEdition.id, data);
+        await updateEdition(editingEdition.id, payload);
 
         alert("Edition updated successfully.");
       } else {
-        await createEdition(data);
+        await createEdition(payload);
 
         alert("Edition created successfully.");
       }
@@ -160,6 +176,7 @@ export default function Editions() {
       });
 
       setEditingEdition(null);
+      setSelectedCategoryIds([]);
       setShowModal(false);
 
       fetchEditions();
@@ -327,8 +344,9 @@ export default function Editions() {
     ======================== */}
 
     {showModal && (
-      <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-xl p-8">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-xl">
+          <div className="p-6">
           <h2 className="text-2xl font-bold text-[#0B1F3A] mb-6">
             {editingEdition
               ? "Edit Edition"
@@ -393,12 +411,38 @@ export default function Editions() {
               </option>
             </FormSelect>
 
-            <div className="flex justify-end gap-3">
+            <div className="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <div className="mb-3">
+                <h3 className="font-semibold text-[#0B1F3A]">Categories</h3>
+                <p className="text-sm text-gray-600">Select the award categories available for this edition.</p>
+              </div>
+              {categories.length ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {categories.map((category) => {
+                    const checked = selectedCategoryIds.includes(category.id);
+                    return (
+                      <label key={category.id} className="flex cursor-pointer items-center gap-3 rounded-md bg-white px-3 py-2.5 text-sm font-medium text-gray-700 shadow-sm">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => setSelectedCategoryIds((ids) => checked ? ids.filter((id) => id !== category.id) : [...ids, category.id])}
+                          className="h-4 w-4 rounded border-gray-300 text-[#C9A84C] focus:ring-[#C9A84C]"
+                        />
+                        {category.category_name}
+                      </label>
+                    );
+                  })}
+                </div>
+              ) : <p className="text-sm text-gray-500">No categories are available yet.</p>}
+            </div>
+
+            <div className="sticky bottom-0 flex justify-end gap-3 bg-white pt-4 border-t">
               <Button
                 variant="secondary"
                 onClick={() => {
                   setShowModal(false);
                   setEditingEdition(null);
+                  setSelectedCategoryIds([]);
 
                   reset({
                     title: "",
@@ -420,8 +464,10 @@ export default function Editions() {
               </Button>
             </div>
           </form>
+            </div>
+          </div>
         </div>
-      </div>
+
     )}
   </div>
 );

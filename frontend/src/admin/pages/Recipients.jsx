@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { getEditions } from "../services/editionService";
+import { getEditions, getEditionCategories } from "../services/editionService";
+import { getCategories } from "../services/categoryService";
 
 import {
   getRecipients,
@@ -58,6 +59,8 @@ export default function Recipients() {
 
   const [recipients, setRecipients] = useState([]);
   const [editions, setEditions] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [editionCategories, setEditionCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -71,6 +74,7 @@ export default function Recipients() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(recipientSchema),
@@ -113,9 +117,19 @@ export default function Recipients() {
   }
 };
 
+  const loadEditionCategories = async (editionId) => {
+    if (!editionId) {
+      setEditionCategories([]);
+      return;
+    }
+    const data = await getEditionCategories(editionId);
+    setEditionCategories(data.categories || []);
+  };
+
   useEffect(() => {
     fetchRecipients();
     fetchEditions();
+    getCategories().then(setCategories).catch((err) => console.error("Failed to load categories", err));
 }, []);
 
   // =======================
@@ -124,6 +138,7 @@ export default function Recipients() {
 
   const handleAdd = () => {
     setEditingRecipient(null);
+    setEditionCategories([]);
 
     reset({
       edition_id: "",
@@ -141,7 +156,7 @@ export default function Recipients() {
   // Open Edit Modal
   // =======================
 
-  const handleEdit = (recipient) => {
+  const handleEdit = async (recipient) => {
     setEditingRecipient(recipient);
 
     reset({
@@ -153,8 +168,17 @@ export default function Recipients() {
       photo_url: recipient.photo_url || "",
     });
 
+    try {
+      await loadEditionCategories(recipient.edition_id);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load categories for this edition.");
+      return;
+    }
+
     setShowModal(true);
   };
+  const editionField = register("edition_id", { valueAsNumber: true });
 
   // =======================
   // Submit Form
@@ -338,7 +362,18 @@ export default function Recipients() {
               </label>
 
               <select
-                {...register("edition_id")}
+                {...editionField}
+                onChange={async (event) => {
+                  editionField.onChange(event);
+                  setValue("category_id", "");
+                  try {
+                    await loadEditionCategories(event.target.value);
+                  } catch (err) {
+                    console.error(err);
+                    setEditionCategories([]);
+                    alert("Failed to load categories for this edition.");
+                  }
+                }}
                 className="w-full border rounded p-2"
             >
                 <option value="">Select Edition</option>
@@ -357,18 +392,23 @@ export default function Recipients() {
               )}
             </div>
 
-            {/* Category ID */}
+            {/* Category */}
 
             <div className="mb-4">
               <label className="block mb-2 font-medium">
-                Category ID
+                Category
               </label>
 
-              <input
-                type="number"
+              <select
                 {...register("category_id", { valueAsNumber: true })}
                 className="w-full border rounded p-2"
-              />
+                disabled={!editionCategories.length}
+              >
+                <option value="">{editionCategories.length ? "Select Category" : "Select an edition first"}</option>
+                {categories.filter((category) => editionCategories.includes(category.id)).map((category) => (
+                  <option key={category.id} value={category.id}>{category.category_name}</option>
+                ))}
+              </select>
 
               {errors.category_id && (
                 <p className="text-red-500 text-sm">
@@ -465,6 +505,7 @@ export default function Recipients() {
                 onClick={() => {
                   setShowModal(false);
                   setEditingRecipient(null);
+                  setEditionCategories([]);
 
                   reset({
                     edition_id: "",

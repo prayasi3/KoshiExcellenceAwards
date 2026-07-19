@@ -2,6 +2,7 @@ import {
   createEditionRecord,
   deleteEditionRecord,
   getEdition,
+  getEditionCategories,
   getEditions,
   updateEditionRecord,
 } from "../services/editionService.js";
@@ -15,6 +16,11 @@ export const getAllEditions = asyncHandler(async (req, res) => {
 
 export const getEditionById = asyncHandler(async (req, res) => {
   const data = await getEdition(req.params.id);
+  return sendSuccess(res, 200, "Fetched successfully", data);
+});
+
+export const getAssignedCategories = asyncHandler(async (req, res) => {
+  const data = await getEditionCategories(req.params.id);
   return sendSuccess(res, 200, "Fetched successfully", data);
 });
 
