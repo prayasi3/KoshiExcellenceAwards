@@ -17,6 +17,7 @@ export const Category = db.define(
 
     slug: {
       type: DataTypes.STRING(255),
+      unique: true,
       allowNull: true,
     },
 

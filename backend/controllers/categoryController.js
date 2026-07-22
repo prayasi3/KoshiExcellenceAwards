@@ -8,6 +8,8 @@ import {
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendSuccess } from "../utils/apiResponse.js";
 
+import slugify from "slugify";
+
 export const getAllCategories = asyncHandler(async (req, res) => {
   const data = await getCategories(req.query);
   return sendSuccess(res, 200, "Fetched successfully", data);
@@ -19,12 +21,31 @@ export const getCategoryById = asyncHandler(async (req, res) => {
 });
 
 export const createCategory = asyncHandler(async (req, res) => {
-  const data = await createCategoryRecord(req.body);
+  const slug = slugify(req.body.category_name, {
+    lower: true,
+    strict: true,
+  });
+
+  const data = await createCategoryRecord({
+    ...req.body,
+    slug,
+  });
+
   return sendSuccess(res, 201, "Created successfully", data);
 });
 
 export const updateCategory = asyncHandler(async (req, res) => {
-  const data = await updateCategoryRecord(req.params.id, req.body);
+  const body = { ...req.body };
+
+  if (body.category_name) {
+    body.slug = slugify(body.category_name, {
+      lower: true,
+      strict: true,
+    });
+  }
+
+  const data = await updateCategoryRecord(req.params.id, body);
+
   return sendSuccess(res, 200, "Updated successfully", data);
 });
 

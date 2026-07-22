@@ -7,7 +7,12 @@ import {
   requireValue,
 } from "./serviceUtils.js";
 
-const categoryFields = ["category_name", "description", "is_active"];
+const categoryFields = [
+  "category_name", 
+  "slug", 
+  "description", 
+  "is_active"
+];
 
 export const getCategories = async (query) =>
   findPaginated(Category, query, {

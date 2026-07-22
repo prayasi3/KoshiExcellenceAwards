@@ -28,7 +28,7 @@ const categorySchema = z.object({
     .string()
     .min(2, "Category name must be at least 2 characters"),
 
-  description: z.string().optional(),
+    description: z.string().optional(),
 
   is_active: z.boolean(),
 });
@@ -395,6 +395,7 @@ export default function Categories() {
 
                         reset({
                           category_name: "",
+                          slug: "",
                           description: "",
                           is_active: true,
                         });

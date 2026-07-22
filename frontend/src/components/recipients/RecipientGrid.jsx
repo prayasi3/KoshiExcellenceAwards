@@ -62,6 +62,13 @@ export default function RecipientGrid({ categorySlug }) {
     categories.map((category) => [Number(category.id), category.category_name])
   );
 
+  console.log("URL slug:", categorySlug);
+  console.log("Categories:", categories);
+  console.log(
+  "Matched category:",
+  categories.find((category) => category.slug === categorySlug)
+);
+
   const activeCategory = categorySlug
     ? categories.find((category) => category.slug === categorySlug)
     : null;
