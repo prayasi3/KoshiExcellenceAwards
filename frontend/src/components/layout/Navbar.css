@@ -1,7 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap");
-
 :root{
     --navy:#0B1F3A;
+    --navy-light:#162D50;
     --gold:#C9A84C;
 }
 
@@ -10,49 +9,66 @@
     top:0;
     left:0;
     width:100%;
-    height:90px;
-    background:var(--navy);
+    height:76px;
+    background:#ffffff;
     z-index:1000;
-    box-shadow:0 3px 12px rgba(0,0,0,.18);
+    border-bottom:1px solid #ECEEF2;
+    box-shadow:0 1px 2px rgba(11,31,58,.04);
 }
 
 .navbar-spacer{
-    height:90px;
+    height:76px;
 }
 
 .navbar-container{
-    max-width:1600px;
+    max-width:1440px;
     margin:auto;
-    padding:0 48px;
-    height:90px;
+    padding:0 32px;
+    height:76px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:24px;
 }
+
+/* ========================= Logo / wordmark ========================= */
 
 .logo{
     flex-shrink:0;
     display:flex;
     align-items:center;
+    gap:10px;
+    text-decoration:none;
 }
 
 .logo-image{
-    height:72px;
+    height:70px;
     width:auto;
     display:block;
-    transition:.3s;
 }
 
-.logo:hover .logo-image{
-    transform:translateY(-2px);
+.logo-text{
+    font-family:"Playfair Display", serif;
+    font-size:15px;
+    font-weight:700;
+    color:var(--navy);
+    white-space:nowrap;
+    letter-spacing:.01em;
+}
+
+.logo-text__accent{
+    color:var(--gold);
 }
 
 /* ========================= Desktop nav ========================= */
 
 .nav-links{
     display:flex;
-    align-items:center;
-    gap:34px;
+    align-items: center;
+    gap:6px;
+    flex:1;
+    justify-content:center;
+    margin-left: 100px;
 }
 
 .nav-item{
@@ -60,59 +76,65 @@
     display:flex;
     align-items:center;
     /* Small padding bridges the gap to the dropdown so hover doesn't drop */
-    padding-bottom:14px;
-    margin-bottom:-14px;
+    padding-bottom:12px;
+    margin-bottom:-12px;
 }
 
 .nav-link{
     display:inline-flex;
     align-items:center;
-    gap:4px;
-    color:white;
+    gap:3px;
+    color:#3A4459;
     text-decoration:none;
-    font-family:"Montserrat",sans-serif;
-    font-size:14px;
-    font-weight:800;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    transition:.25s;
+    font-family:"Inter",sans-serif;
+    font-size:15px;
+    font-weight:500;
+    padding:8px 14px;
+    border-radius:8px;
+    transition:.2s;
     white-space:nowrap;
 }
 
 .nav-link:hover{
-    color:var(--gold);
+    color:var(--navy);
+    background:#F5F6F8;
 }
 
 .nav-link.active{
-    color:var(--gold);
+    color:var(--navy);
+    font-weight:600;
+    background:#F5ECD0;
 }
 
 .nav-link__chevron{
-    transition:transform .25s ease;
-    opacity:.75;
+    transition:transform .2s ease;
+    opacity:.6;
+    margin-top:1px;
 }
 
 .nav-item:hover .nav-link__chevron{
     transform:rotate(180deg);
+    opacity:1;
 }
 
 .nav-dropdown{
     position:absolute;
     top:100%;
     left:50%;
-    transform:translate(-50%, 8px);
-    min-width:230px;
+    transform:translate(-50%, 6px);
+    min-width:225px;
     background:#ffffff;
+    border:1px solid #ECEEF2;
     border-radius:14px;
     padding:10px;
-    box-shadow:0 18px 38px rgba(11,31,58,.28);
+    box-shadow:0 16px 32px rgba(11,31,58,.12);
     display:flex;
     flex-direction:column;
     gap:2px;
     opacity:0;
     visibility:hidden;
     pointer-events:none;
-    transition:opacity .2s ease, transform .2s ease, visibility .2s ease;
+    transition:opacity .18s ease, transform .18s ease, visibility .18s ease;
     z-index:1100;
 }
 
@@ -129,10 +151,10 @@
     align-items:center;
     gap:6px;
     padding:8px 12px 4px;
-    font-family:"Montserrat",sans-serif;
+    font-family:"Inter",sans-serif;
     font-size:11px;
     font-weight:700;
-    letter-spacing:.08em;
+    letter-spacing:.06em;
     text-transform:uppercase;
     color:#9CA3AF;
 }
@@ -141,23 +163,23 @@
     display:block;
     padding:9px 12px;
     border-radius:9px;
-    color:var(--navy);
+    color:#374156;
     font-family:"Inter",sans-serif;
     font-size:14px;
-    font-weight:600;
+    font-weight:500;
     text-decoration:none;
-    transition:.18s;
+    transition:.15s;
 }
 
 .nav-dropdown__link:hover{
-    background:#F5ECD0;
+    background:#F5F6F8;
     color:var(--navy);
 }
 
 .nav-dropdown__link--all{
-    font-weight:800;
-    color:#A37D23;
-    border-bottom:1px solid #EFE3C2;
+    font-weight:700;
+    color:var(--navy);
+    border-bottom:1px solid #EEF0F3;
     border-radius:9px 9px 0 0;
     margin-bottom:4px;
 }
@@ -165,25 +187,26 @@
 /* ========================= Contact button ========================= */
 
 .contact-btn{
-    width:170px;
-    height:46px;
+    flex-shrink:0;
+    height:42px;
+    padding:0 22px;
     border-radius:999px;
-    background:linear-gradient(#e0bf6c,#C9A84C);
-    color:var(--navy);
-    font-family:"Montserrat",sans-serif;
-    font-weight:800;
+    background:var(--navy);
+    color:#ffffff;
+    font-family:"Inter",sans-serif;
+    font-size:14px;
+    font-weight:600;
     text-decoration:none;
     display:flex;
     align-items:center;
     justify-content:center;
-    box-shadow:0 8px 18px rgba(201,168,76,.35);
-    transition:.25s;
-    flex-shrink:0;
+    transition:.2s;
+    white-space:nowrap;
 }
 
 .contact-btn:hover{
-    transform:translateY(-2px);
-    box-shadow:0 12px 22px rgba(201,168,76,.45);
+    background:var(--navy-light);
+    transform:translateY(-1px);
 }
 
 /* ========================= Mobile ========================= */
@@ -192,26 +215,27 @@
     display:none;
     background:none;
     border:none;
-    color:white;
+    color:var(--navy);
     cursor:pointer;
 }
 
 .mobile-menu{
     position:fixed;
-    top:90px;
+    top:76px;
     left:0;
     width:100%;
-    max-height:calc(100vh - 90px);
+    max-height:calc(100vh - 76px);
     overflow-y:auto;
-    background:var(--navy);
+    background:#ffffff;
+    border-top:1px solid #ECEEF2;
     display:flex;
     flex-direction:column;
-    padding:10px 0 18px;
-    box-shadow:0 6px 18px rgba(0,0,0,.25);
+    padding:8px 0 18px;
+    box-shadow:0 12px 24px rgba(11,31,58,.08);
 }
 
 .mobile-item{
-    border-bottom:1px solid rgba(255,255,255,.06);
+    border-bottom:1px solid #F1F2F5;
 }
 
 .mobile-item__row{
@@ -222,21 +246,23 @@
 
 .mobile-link{
     flex:1;
-    color:white;
+    color:#28324A;
     text-decoration:none;
-    padding:16px 24px;
-    font-family:"Montserrat",sans-serif;
-    font-weight:700;
+    padding:15px 24px;
+    font-family:"Inter",sans-serif;
+    font-weight:600;
+    font-size:15px;
 }
 
 .mobile-link.active{
-    color:var(--gold);
+    color:var(--navy);
+    background:#F5ECD0;
 }
 
 .mobile-item__toggle{
     background:none;
     border:none;
-    color:white;
+    color:#28324A;
     padding:12px 20px;
     cursor:pointer;
     transition:transform .2s ease;
@@ -255,32 +281,32 @@
 }
 
 .mobile-submenu__link{
-    color:#D9DEE8;
+    color:#5A647A;
     text-decoration:none;
     font-family:"Inter",sans-serif;
     font-size:14px;
-    font-weight:600;
+    font-weight:500;
     padding:9px 10px;
     border-radius:8px;
 }
 
 .mobile-submenu__link:hover{
-    background:rgba(201,168,76,.12);
-    color:var(--gold);
+    background:#F5ECD0;
+    color:var(--navy);
 }
 
 .mobile-contact{
-    margin:20px 24px 4px;
-    height:46px;
+    margin:16px 24px 4px;
+    height:44px;
     border-radius:999px;
-    background:var(--gold);
-    color:var(--navy);
+    background:var(--navy);
+    color:#ffffff;
     text-decoration:none;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-family:"Montserrat",sans-serif;
-    font-weight:800;
+    font-family:"Inter",sans-serif;
+    font-weight:600;
 }
 
 @media (max-width:1180px){
@@ -295,11 +321,11 @@
     }
 }
 
-@media (max-width:768px){
-    .navbar-container{
-        padding:0 20px;
+@media (max-width:480px){
+    .logo-text{
+        display:none;
     }
-    .logo-image{
-        height:58px;
+    .navbar-container{
+        padding:0 16px;
     }
 }

@@ -64,7 +64,7 @@ export default function CategoryCard({ category }) {
           text-[#C9A84C]
         "
       >
-        View Category
+        View Awarded
 
         <ArrowRight
           size={18}

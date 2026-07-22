@@ -6,11 +6,6 @@ import TeamGrid from "../components/team/TeamGrid";
 export default function Teams() {
   return (
     <>
-      <PageBanner
-        title="Meet Our Team"
-        subtitle="The dedicated leaders, advisors, judges, and committee members behind the Koshi Excellence Award."
-      />
-
       <Section className="bg-white">
         <SectionHeading
           eyebrow="Leadership"

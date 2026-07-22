@@ -12,14 +12,13 @@ import { useEditions } from "../../context/useEditions";
 const navLinks = [
   { name: "Home", path: "/" },
   {
-    name: "Recipients",
+    name: "Awarded",
     path: "/recipients",
     buildEditionLink: (edition) => `/recipients?edition=${edition.year}`,
   },
   {
     name: "Categories",
     path: "/categories",
-    buildEditionLink: (edition) => `/categories?edition=${edition.id}`,
   },
   {
     name: "Honorees",
@@ -77,6 +76,13 @@ export default function Navbar() {
               alt="Koshi Excellence Award"
               className="logo-image"
             />
+            <span className="logo-text">
+              Koshi 
+              <br />
+              <span className="logo-text__accent">Excellence</span> 
+              <br />
+              Award
+            </span>
           </NavLink>
 
           {/* Desktop Navigation */}

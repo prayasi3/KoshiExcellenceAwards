@@ -6,11 +6,6 @@ import SpeakerGrid from "../components/speakers/SpeakerGrid";
 export default function Speakers() {
   return (
     <>
-      <PageBanner
-        title="Award Speakers"
-        subtitle="Meet the distinguished speakers who share their expertise and inspire audiences during the Koshi Excellence Award."
-      />
-
       <Section className="bg-white">
         <SectionHeading
           eyebrow="Event"

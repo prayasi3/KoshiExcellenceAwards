@@ -9,15 +9,6 @@ import CategoryGrid from "../components/categories/CategoryGrid";
 export default function Categories() {
   return (
     <>
-      <PageBanner
-        title="Award Categories"
-        subtitle="Explore the categories that celebrate excellence and recognize individuals whose achievements have made a lasting impact across Koshi Province."
-        breadcrumbs={[
-          { label: "Home", path: "/" },
-          { label: "Categories" },
-        ]}
-      />
-
       <Section background="white">
         <Container>
           <SectionHeading
