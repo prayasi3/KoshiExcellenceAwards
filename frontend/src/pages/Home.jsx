@@ -1,61 +1,43 @@
-import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import {
+  Award,
+  ArrowRight,
+  CalendarDays,
+  Clock,
+  MapPin,
+  Ticket,
+  Quote,
+  Users,
+  Sparkles,
+} from "lucide-react";
+
 import trophy from "../assets/trophy-transparent.svg";
 import organizerLogo from "../assets/organizer.png";
 import managerLogo from "../assets/manager.png";
 import pradesKhabarLogo from "../assets/prades-khabar.png";
-import "./Home.css";
-// ─── Data ─────────────────────────────────────────────────────────────────────
-const CATEGORIES = [
-  { id: 1,  name: "Social Work",      icon: "🤝" },
-  { id: 2,  name: "Sports",           icon: "🏆" },
-  { id: 3,  name: "Startup",          icon: "🚀" },
-  { id: 4,  name: "Technology",       icon: "💡" },
-  { id: 5,  name: "Insurance",        icon: "🛡️" },
-  { id: 6,  name: "Literature",       icon: "📖" },
-  { id: 7,  name: "Media",            icon: "📡" },
-  { id: 8,  name: "Music",            icon: "🎵" },
-  { id: 9,  name: "Agriculture",      icon: "🌾" },
-  { id: 10, name: "Automobile",       icon: "🚗" },
-  { id: 11, name: "Banking",          icon: "🏦" },
-  { id: 12, name: "Capital Market",   icon: "📈" },
-  { id: 13, name: "Corporate",        icon: "🏢" },
-  { id: 14, name: "Education",        icon: "🎓" },
-  { id: 15, name: "Entrepreneurship", icon: "💼" },
-  { id: 16, name: "Health",           icon: "❤️" },
+import aboutImage from "../assets/about-event.jpg";
+
+import Button from "../components/common/Button";
+import CategoryCard from "../components/categories/CategoryCard";
+import { fetchItems } from "../lib/api";
+import { useEditions } from "../context/useEditions";
+
+const SPONSOR_TIERS = [
+  { tier: "Title Sponsor", label: "Title" },
+  { tier: "Gold Sponsor", label: "Gold" },
+  { tier: "Silver Sponsor", label: "Silver" },
+  { tier: "Associate Sponsor", label: "Associate" },
 ];
 
-const SPONSORS = [
-  { tier: "Title Sponsor",     label: "TITLE",     colorClass: "badge--gold" },
-  { tier: "Gold Sponsor",      label: "GOLD",      colorClass: "badge--gold" },
-  { tier: "Silver Sponsor",    label: "SILVER",    colorClass: "badge--silver" },
-  { tier: "Associate Sponsor", label: "ASSOCIATE", colorClass: "badge--associate" },
+const EVENT_DETAILS = [
+  { icon: CalendarDays, title: "Date", value: "March 21, 2026", note: "Saturday Evening" },
+  { icon: Clock, title: "Time", value: "6:00 PM NPT", note: "Doors open at 5:30 PM" },
+  { icon: MapPin, title: "Venue", value: "Soaltee Westend", note: "Itahari, Koshi Province" },
+  { icon: Ticket, title: "Tickets", value: "By Invitation", note: "Contact organisers to apply" },
 ];
 
-function CategoryCard({ category }) {
-  return (
-    <div className="cat-card">
-      <span className="cat-icon">{category.icon}</span>
-      <span className="cat-name">{category.name}</span>
-      <div className="cat-border" />
-    </div>
-  );
-}
-
-function SponsorRow({ label, colorClass }) {
-  return (
-    <div className="sponsor-row">
-      <span className={`sponsor-badge ${colorClass}`}>{label}</span>
-      <div className="sponsor-slot">
-        <span className="sponsor-placeholder">Your Brand Here</span>
-      </div>
-    </div>
-  );
-}
-
-// ─── Scroll-reveal Section wrapper ────────────────────────────────────────────
-
-function Section({ children, className = "" }) {
+// ─── Scroll-reveal wrapper ───────────────────────────────────────────────
+function Reveal({ children, className = "" }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -67,7 +49,7 @@ function Section({ children, className = "" }) {
           obs.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.12 }
     );
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
@@ -76,203 +58,368 @@ function Section({ children, className = "" }) {
   return (
     <div
       ref={ref}
-      className={`section ${className} ${visible ? "section--visible" : ""}`}
+      className={`transition-all duration-700 ease-out ${
+        visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+      } ${className}`}
     >
       {children}
     </div>
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────────
+// ─── Hero photo slideshow ────────────────────────────────────────────────
+function HeroSlideshow({ slides }) {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (slides.length < 2) return undefined;
+    const id = window.setInterval(() => {
+      setActive((current) => (current + 1) % slides.length);
+    }, 5000);
+    return () => window.clearInterval(id);
+  }, [slides.length]);
+
+  if (!slides.length) {
+    return (
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0B1F3A] via-[#122a4d] to-[#0B1F3A]" />
+    );
+  }
+
+  return (
+    <div className="absolute inset-0">
+      {slides.map((slide, index) => (
+        <img
+          key={slide.id ?? index}
+          src={slide.photo_url}
+          alt=""
+          aria-hidden="true"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1800ms] ease-in-out ${
+            index === active ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function Home() {
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [recipients, setRecipients] = useState([]);
+  const { editions } = useEditions();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    fetchItems("/categories?limit=100")
+      .then((items) => isMounted && setCategories(items))
+      .catch(() => {})
+      .finally(() => isMounted && setCategoriesLoading(false));
+
+    fetchItems("/recipients?limit=12")
+      .then((items) => isMounted && setRecipients(items))
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const slideshowRecipients = recipients.filter((recipient) => Boolean(recipient.photo_url));
+  const featuredCategories = categories.slice(0, 8);
+
+  const stats = [
+    { value: "16", label: "Award Categories" },
+    { value: editions.length ? String(editions.length) : "1", label: editions.length > 1 ? "Editions Held" : "Inaugural Edition" },
+    { value: "1", label: "Province, One Night" },
+  ];
+
   return (
-    <div className="home-page">
-
+    <div>
       {/* ── Hero ── */}
-      <header className="hero">
-        <div className="hero-overlay" />
+      <header className="relative flex min-h-[92vh] items-center overflow-hidden bg-[#0B1F3A] text-white">
+        <HeroSlideshow slides={slideshowRecipients} />
 
-        <svg className="hero-deco" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
-          <line x1="0"    y1="600" x2="800" y2="0" stroke="#C9A84C" strokeWidth="0.5" strokeOpacity="0.25" />
-          <line x1="-100" y1="600" x2="700" y2="0" stroke="#C9A84C" strokeWidth="0.5" strokeOpacity="0.15" />
-          <line x1="100"  y1="600" x2="900" y2="0" stroke="#C9A84C" strokeWidth="0.5" strokeOpacity="0.15" />
-        </svg>
+        {/* Overlay for legibility + brand radial gold accent */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F3A] via-[#0B1F3A]/85 to-[#0B1F3A]/60" />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(55% 75% at 80% 10%, rgba(201,168,76,0.35) 0%, rgba(201,168,76,0) 60%)",
+          }}
+          aria-hidden="true"
+        />
 
-        <div className="hero-content">
-          <div className="hero-trophy-wrap" aria-hidden="true">
-            <div className="hero-trophy-crop">
-              <img className="hero-trophy" src={trophy} alt="" />
-            </div>
-          </div>
+        <div className="relative mx-auto w-full max-w-7xl px-5 py-24 md:px-10">
+          <div className="max-w-3xl">
+            <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.3em] text-[#C9A84C]">
+              <Sparkles size={16} aria-hidden="true" />
+              The Most Prestigious Award of Koshi Province
+            </p>
 
-          <div className="hero-copy">
-            <p className="hero-eyebrow">THE MOST PRESTIGIOUS AWARD OF KOSHI PROVINCE</p>
-
-            <h1 className="hero-title">
-              <span className="hero-title__line">Koshi</span>
-              <span className="hero-title__accent">Excellence</span>
-              <span className="hero-title__line">Award</span>
+            <h1 className="mt-6 font-heading text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl">
+              Koshi <span className="text-[#C9A84C]">Excellence</span> Award
             </h1>
 
-            <p className="hero-sub">
+            <p className="mt-6 max-w-xl text-lg leading-8 text-gray-200">
               Recognising the achievers who shape Koshi Province across industry,
               culture, and community.
             </p>
 
-            <div className="hero-ctas">
-              <Link to="/gallery" className="btn btn--primary">View Gallery</Link>
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <Button to="/recipients" icon={ArrowRight}>
+                View Recipients
+              </Button>
+              <Button to="/categories" variant="ghost">
+                Explore Categories
+              </Button>
+            </div>
+
+            <div className="mt-14 flex flex-wrap gap-10 border-t border-white/15 pt-8">
+              {stats.map((stat) => (
+                <div key={stat.label}>
+                  <p className="font-heading text-4xl font-bold text-[#C9A84C]">{stat.value}</p>
+                  <p className="mt-1 text-sm text-gray-300">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </header>
 
       {/* ── About ── */}
-      <Section>
-        <div className="container">
-          <div className="about-grid">
-            <div className="about-text">
-              <p className="eyebrow">ABOUT THE AWARD</p>
-              <h2 className="section-title">
-                Celebrating Excellence<br />Across Koshi Province
-              </h2>
-              <p className="body-text">
-                The Koshi Excellence Award is the premier recognition programme
-                for individuals and organisations driving progress in Koshi
-                Province. Organised by <strong>Nayan Media Foundation</strong> and
-                managed by <strong>Kafals</strong>, with media coverage by{" "}
-                <strong>Prades Khabar</strong>, the awards honour those who have
-                made an extraordinary impact in their field.
-              </p>
-              <p className="body-text">
-                From grassroots social workers to technology pioneers, from
-                agricultural innovators to cultural custodians, the award
-                celebrates the full breadth of human achievement in our province.
-              </p>
-              <div className="stat-row">
-                <div className="stat">
-                  <span className="stat__num">16</span>
-                  <span className="stat__desc">Award Categories</span>
-                </div>
-                <div className="stat-divider" />
-                <div className="stat">
-                  <span className="stat__num">2026</span>
-                  <span className="stat__desc">Inaugural Edition</span>
-                </div>
-                <div className="stat-divider" />
-                <div className="stat">
-                  <span className="stat__num">1</span>
-                  <span className="stat__desc">Province, One Night</span>
-                </div>
-              </div>
-            </div>
+      <section className="bg-white py-20 sm:py-24">
+        <div className="mx-auto grid max-w-7xl gap-14 px-5 md:px-10 lg:grid-cols-2 lg:items-center">
+          <Reveal>
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
+              About the Award
+            </p>
+            <h2 className="mt-3 font-heading text-4xl font-bold text-[#0B1F3A]">
+              Celebrating Excellence Across Koshi Province
+            </h2>
+            <p className="mt-6 leading-7 text-gray-600">
+              The Koshi Excellence Award is the premier recognition programme
+              for individuals and organisations driving progress in Koshi
+              Province. Organised by <strong>Nayan Media Foundation</strong> and
+              managed by <strong>Kafals</strong>, with media coverage by{" "}
+              <strong>Prades Khabar</strong>, the awards honour those who have
+              made an extraordinary impact in their field.
+            </p>
+            <p className="mt-4 leading-7 text-gray-600">
+              From grassroots social workers to technology pioneers, from
+              agricultural innovators to cultural custodians, the award
+              celebrates the full breadth of human achievement in our province.
+            </p>
+            <Button to="/categories" variant="outline" className="mt-8" icon={ArrowRight}>
+              View Categories
+            </Button>
+          </Reveal>
 
-            <div className="about-visual">
-              <div className="golden-frame">
-                <div className="golden-frame__inner">
-                  <span className="golden-frame__icon">🏆</span>
-                  <p className="golden-frame__text">
-                    "Excellence is not an act, but a habit."
-                  </p>
-                  <p className="golden-frame__attr">— Nayan Media Foundation</p>
-                </div>
-              </div>
+          <Reveal className="relative">
+            <div className="overflow-hidden rounded-3xl shadow-xl">
+              <img
+                src={aboutImage}
+                alt="Koshi Excellence Award ceremony"
+                className="h-full w-full object-cover"
+              />
             </div>
-          </div>
+            <div className="absolute -bottom-8 -left-6 hidden max-w-xs rounded-2xl border border-[#C9A84C]/30 bg-white p-6 shadow-xl sm:block">
+              <Quote className="text-[#C9A84C]" size={26} aria-hidden="true" />
+              <p className="mt-3 font-heading text-lg italic text-[#0B1F3A]">
+                "Excellence is not an act, but a habit."
+              </p>
+              <p className="mt-2 text-sm text-gray-500">— Nayan Media Foundation</p>
+            </div>
+          </Reveal>
         </div>
-      </Section>
+      </section>
 
-      {/* ── Categories ── */}
-      <Section className="section--dark">
-        <div className="container">
-          <div className="section-header">
-            <p className="eyebrow">RECOGNITION ACROSS SECTORS</p>
-            <h2 className="section-title section-title--white">Award Categories</h2>
-            <div className="gold-rule" />
-          </div>
-          <div className="cat-grid">
-            {CATEGORIES.map((cat) => (
-              <CategoryCard key={cat.id} category={cat} />
-            ))}
-          </div>
+      {/* ── Award Categories ── */}
+      <section className="bg-[#0B1F3A] py-20 text-white sm:py-24">
+        <div className="mx-auto max-w-7xl px-5 md:px-10">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
+              Recognition Across Sectors
+            </p>
+            <h2 className="mt-3 font-heading text-4xl font-bold">Award Categories</h2>
+            <p className="mt-4 leading-7 text-gray-300">
+              Select a category to meet every recipient who has been honoured
+              in it, across all editions of the Koshi Excellence Award.
+            </p>
+          </Reveal>
+
+          <Reveal className="mt-14">
+            {categoriesLoading ? (
+              <p className="text-center text-gray-300">Loading categories...</p>
+            ) : featuredCategories.length ? (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {featuredCategories.map((category) => (
+                  <CategoryCard key={category.id} category={category} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-300">Categories will be announced soon.</p>
+            )}
+          </Reveal>
+
+          {categories.length > 0 && (
+            <div className="mt-12 text-center">
+              <Button to="/categories" variant="outline">
+                View All Categories
+              </Button>
+            </div>
+          )}
         </div>
-      </Section>
+      </section>
 
       {/* ── Event Details ── */}
-      <Section>
-        <div className="container">
-          <div className="section-header">
-            <p className="eyebrow">MARK YOUR CALENDAR</p>
-            <h2 className="section-title">Event Details</h2>
-            <div className="gold-rule" />
-          </div>
-          <div className="event-grid">
-            {[
-              { icon: "📅", title: "Date",    val: "March 21, 2026", note: "Saturday Evening"       },
-              { icon: "⏰", title: "Time",    val: "6:00 PM NPT",    note: "Doors open at 5:30 PM" },
-              { icon: "📍", title: "Venue",   val: "Soaltee Westend", note: "Itahari, Koshi Province" },
-              { icon: "🎟️", title: "Tickets", val: "By Invitation",  note: "Contact organisers to apply" },
-            ].map((item) => (
-              <div key={item.title} className="event-card">
-                <span className="event-card__icon">{item.icon}</span>
-                <h3 className="event-card__title">{item.title}</h3>
-                <p className="event-card__val">{item.val}</p>
-                <p className="event-card__note">{item.note}</p>
-              </div>
+      <section className="bg-white py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl px-5 md:px-10">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
+              Mark Your Calendar
+            </p>
+            <h2 className="mt-3 font-heading text-4xl font-bold text-[#0B1F3A]">Event Details</h2>
+          </Reveal>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {EVENT_DETAILS.map((item) => (
+              <Reveal key={item.title}>
+                <div className="h-full rounded-2xl border border-slate-200 p-8 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#F5ECD0] text-[#0B1F3A]">
+                    <item.icon size={26} aria-hidden="true" />
+                  </div>
+                  <h3 className="mt-5 text-sm font-semibold uppercase tracking-wider text-gray-500">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 font-heading text-xl font-bold text-[#0B1F3A]">{item.value}</p>
+                  <p className="mt-1 text-sm text-gray-500">{item.note}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
-      </Section>
+      </section>
+
+      {/* ── CTA banner ── */}
+      <section className="relative overflow-hidden bg-[#0B1F3A] py-20 text-center text-white">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(60% 100% at 50% 0%, rgba(201,168,76,0.3) 0%, rgba(201,168,76,0) 65%)",
+          }}
+          aria-hidden="true"
+        />
+        <Reveal className="relative mx-auto max-w-3xl px-5">
+          <Award className="mx-auto text-[#C9A84C]" size={40} aria-hidden="true" />
+          <h2 className="mt-5 font-heading text-3xl font-bold sm:text-4xl">
+            Celebrating Brilliance, Leadership, and Innovation
+          </h2>
+          <p className="mt-4 leading-7 text-gray-300">
+            Join us in honouring the exceptional individuals who are driving
+            progress and excellence in Koshi Province.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <Button to="/recipients" icon={ArrowRight}>
+              Meet the Recipients
+            </Button>
+            <Button to="/honorees" variant="ghost" icon={Users} iconPosition="left">
+              Distinguished Honorees
+            </Button>
+          </div>
+        </Reveal>
+      </section>
 
       {/* ── Sponsors ── */}
-      <Section className="section--light">
-        <div className="container">
-          <div className="section-header">
-            <p className="eyebrow">PARTNERSHIP OPPORTUNITIES</p>
-            <h2 className="section-title">Our Sponsors</h2>
-            <div className="gold-rule" />
-            <p className="body-text body-text--centered">
+      <section className="bg-[#F2F4F7] py-20 sm:py-24">
+        <div className="mx-auto max-w-5xl px-5 md:px-10">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
+              Partnership Opportunities
+            </p>
+            <h2 className="mt-3 font-heading text-4xl font-bold text-[#0B1F3A]">Our Sponsors</h2>
+            <p className="mt-4 leading-7 text-gray-600">
               Align your brand with excellence. Sponsorship packages are
               available across four tiers.
             </p>
-          </div>
-          <div className="sponsor-stack">
-            {SPONSORS.map((s) => (
-              <SponsorRow key={s.tier} {...s} />
-            ))}
-          </div>
-          <div className="sponsor-cta">
-            <Link to="/contact" className="btn btn--primary">Become a Sponsor</Link>
-          </div>
-        </div>
-      </Section>
+          </Reveal>
 
-      {/* ── Organisers ── */}
-      <Section>
-        <div className="container">
-          <div className="section-header">
-            <p className="eyebrow">BEHIND THE AWARD</p>
-            <h2 className="section-title">Organised By</h2>
-            <div className="gold-rule" />
-          </div>
-          <div className="organiser-grid">
-            {[
-              { abbr: "NMF", name: "Nayan Media Foundation", role: "Organising Body", logo: organizerLogo },
-              { abbr: "KFL", name: "Kafals",                 role: "Event Management", logo: managerLogo },
-              { abbr: "PK",  name: "Prades Khabar",          role: "Media Partner", logo: pradesKhabarLogo },
-            ].map((org) => (
-              <div key={org.abbr} className="organiser-card">
-                <div className="organiser-card__logo-wrap">
-                  <img className="organiser-card__logo" src={org.logo} alt={`${org.name} logo`} />
-                </div>
-                <h3 className="organiser-card__name">{org.name}</h3>
-                <p className="organiser-card__role">{org.role}</p>
+          <Reveal className="mt-12 space-y-4">
+            {SPONSOR_TIERS.map((sponsor) => (
+              <div
+                key={sponsor.tier}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm"
+              >
+                <span className="rounded-full bg-[#F5ECD0] px-4 py-1.5 text-sm font-bold uppercase tracking-wide text-[#9A7A25]">
+                  {sponsor.label}
+                </span>
+                <span className="text-gray-400">Your brand here</span>
               </div>
             ))}
+          </Reveal>
+
+          <div className="mt-10 text-center">
+            <Button to="/sponsors" icon={ArrowRight}>
+              Become a Sponsor
+            </Button>
           </div>
         </div>
-      </Section>
+      </section>
 
+      {/* ── Organisers ── */}
+      <section className="bg-white py-20 sm:py-24">
+        <div className="mx-auto max-w-6xl px-5 md:px-10">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
+              Behind the Award
+            </p>
+            <h2 className="mt-3 font-heading text-4xl font-bold text-[#0B1F3A]">
+              Event Sponsors &amp; Associates
+            </h2>
+          </Reveal>
+
+          <div className="mt-14 grid gap-8 sm:grid-cols-3">
+            {[
+              { name: "Nayan Media Foundation", role: "Organising Body", logo: organizerLogo },
+              { name: "Kafals", role: "Event Management", logo: managerLogo },
+              { name: "Prades Khabar", role: "Media Partner", logo: pradesKhabarLogo },
+            ].map((org) => (
+              <Reveal key={org.name}>
+                <div className="rounded-2xl border border-slate-200 p-8 text-center shadow-sm">
+                  <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-50">
+                    <img className="h-14 w-14 object-contain" src={org.logo} alt={`${org.name} logo`} />
+                  </div>
+                  <h3 className="mt-5 text-lg font-bold text-[#0B1F3A]">{org.name}</h3>
+                  <p className="mt-1 text-sm text-gray-500">{org.role}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Gallery CTA ── */}
+      <section className="relative overflow-hidden bg-[#0B1F3A] py-20 text-center text-white">
+        <img
+          src={trophy}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-1/2 h-64 w-64 -translate-y-1/2 opacity-10"
+        />
+        <Reveal className="relative mx-auto max-w-2xl px-5">
+          <h2 className="font-heading text-3xl font-bold sm:text-4xl">Relive the Moments</h2>
+          <p className="mt-4 leading-7 text-gray-300">
+            Browse through the official event gallery to see the highlights,
+            the winners, and the unforgettable moments from the Koshi
+            Excellence Award ceremony.
+          </p>
+          <Button to="/gallery" className="mt-8" icon={ArrowRight}>
+            View Event Gallery
+          </Button>
+        </Reveal>
+      </section>
     </div>
   );
 }

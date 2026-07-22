@@ -1,24 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import HonoreeCard from "./HonoreeCard";
-
-const API_URL = "http://localhost:5000/api/honorees?limit=100";
-
-function extractItems(payload) {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.data)) return payload.data;
-  if (Array.isArray(payload?.data?.items)) return payload.data.items;
-  return [];
-}
+import FilterBanner from "../common/FilterBanner";
+import { API_BASE_URL, extractItems } from "../../lib/api";
 
 export default function HonoreeGrid() {
   const [honorees, setHonorees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchParams] = useSearchParams();
+  const editionYear = searchParams.get("edition");
 
   const loadHonorees = useCallback(async () => {
+    setLoading(true);
     try {
-      const response = await fetch(API_URL);
+      const url = editionYear
+        ? `${API_BASE_URL}/honorees?limit=100&edition=${editionYear}`
+        : `${API_BASE_URL}/honorees?limit=100`;
+      const response = await fetch(url);
       if (!response.ok) throw new Error("Request failed");
       setHonorees(extractItems(await response.json()));
       setError("");
@@ -27,7 +27,7 @@ export default function HonoreeGrid() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [editionYear]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(loadHonorees, 0);
@@ -35,7 +35,6 @@ export default function HonoreeGrid() {
   }, [loadHonorees]);
 
   const retry = () => {
-    setLoading(true);
     setError("");
     loadHonorees();
   };
@@ -64,15 +63,24 @@ export default function HonoreeGrid() {
     );
   }
 
-  if (!honorees.length) {
-    return <p className="py-20 text-center text-slate-500">No honorees available.</p>;
-  }
-
   return (
-    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      {honorees.map((honoree) => (
-        <HonoreeCard key={honoree.id} honoree={honoree} />
-      ))}
+    <div>
+      {editionYear && (
+        <FilterBanner
+          label={`Showing honorees from the ${editionYear} edition`}
+          clearTo="/honorees"
+        />
+      )}
+
+      {!honorees.length ? (
+        <p className="py-20 text-center text-slate-500">No honorees available.</p>
+      ) : (
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {honorees.map((honoree) => (
+            <HonoreeCard key={honoree.id} honoree={honoree} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home";
 import PublicCategories from "../pages/Categories";
+import PublicCategoryDetails from "../pages/CategoryDetails";
 import PublicRecipients from "../pages/Recipients";
 import PublicHonorees from "../pages/Honorees";
 import PublicSpeakers from "../pages/Speakers";
@@ -10,6 +11,8 @@ import PublicSponsors from "../pages/Sponsors";
 import PublicGallery from "../pages/Gallery";
 import PublicNews from "../pages/News";
 import PublicTeams from "../pages/Teams"
+import PublicContact from "../pages/Contact";
+import NotFound from "../pages/NotFound";
 
 
 // Admin
@@ -52,6 +55,15 @@ export default function AppRoutes() {
           </MainLayout>
         }
       /> 
+
+      <Route
+        path="/categories/:slug"
+        element={
+          <MainLayout>
+            <PublicCategoryDetails />
+          </MainLayout>
+        }
+      />
 
       <Route
         path="/honorees"
@@ -102,7 +114,25 @@ export default function AppRoutes() {
           </MainLayout>
         }
       />
-      
+
+      <Route
+        path="/contact"
+        element={
+          <MainLayout>
+            <PublicContact />
+          </MainLayout>
+        }
+      />
+
+      <Route
+        path="*"
+        element={
+          <MainLayout>
+            <NotFound />
+          </MainLayout>
+        }
+      />
+
       {/* Login */}
       <Route path="/admin/login" element={<Login />} />
 

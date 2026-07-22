@@ -1,31 +1,34 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import RecipientCard from "./RecipientCard";
+import FilterBanner from "../common/FilterBanner";
+import { API_BASE_URL, extractItems, fetchJson } from "../../lib/api";
 
-const API_BASE_URL = "http://localhost:5000/api";
-
-function extractItems(payload) {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.data)) return payload.data;
-  if (Array.isArray(payload?.data?.items)) return payload.data.items;
-  return [];
-}
-
-async function fetchJson(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Request failed");
-  return response.json();
-}
-
-export default function RecipientGrid() {
+/**
+ * Shows recipients. Pass `categorySlug` to show every recipient ever
+ * honoured in that category, across all editions (used from the
+ * Categories page and homepage category cards). The `edition` query
+ * param (added by the navbar's year dropdown) narrows results to a
+ * single edition's recipients instead.
+ */
+export default function RecipientGrid({ categorySlug }) {
   const [recipients, setRecipients] = useState([]);
-  const [categories, setCategories] = useState(new Map());
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchParams] = useSearchParams();
+  const editionYear = searchParams.get("edition");
 
   const fetchRecipients = useCallback(async () => {
+    setLoading(true);
+
+    const recipientsUrl = editionYear
+      ? `${API_BASE_URL}/recipients?limit=100&edition=${editionYear}`
+      : `${API_BASE_URL}/recipients?limit=100`;
+
     const [recipientResult, categoryResult] = await Promise.allSettled([
-      fetchJson(`${API_BASE_URL}/recipients?limit=100`),
+      fetchJson(recipientsUrl),
       fetchJson(`${API_BASE_URL}/categories?limit=100`),
     ]);
 
@@ -38,19 +41,12 @@ export default function RecipientGrid() {
     setRecipients(extractItems(recipientResult.value));
 
     if (categoryResult.status === "fulfilled") {
-      setCategories(
-        new Map(
-          extractItems(categoryResult.value).map((category) => [
-            Number(category.id),
-            category.category_name,
-          ]),
-        ),
-      );
+      setCategories(extractItems(categoryResult.value));
     }
 
     setError("");
     setLoading(false);
-  }, []);
+  }, [editionYear]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(fetchRecipients, 0);
@@ -58,10 +54,21 @@ export default function RecipientGrid() {
   }, [fetchRecipients]);
 
   const retry = () => {
-    setLoading(true);
     setError("");
     fetchRecipients();
   };
+
+  const categoryMap = new Map(
+    categories.map((category) => [Number(category.id), category.category_name])
+  );
+
+  const activeCategory = categorySlug
+    ? categories.find((category) => category.slug === categorySlug)
+    : null;
+
+  const visibleRecipients = activeCategory
+    ? recipients.filter((recipient) => Number(recipient.category_id) === Number(activeCategory.id))
+    : recipients;
 
   if (loading) {
     return (
@@ -87,29 +94,36 @@ export default function RecipientGrid() {
     );
   }
 
-  if (!recipients.length) {
-    return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-16 text-center">
-        <h3 className="text-xl font-semibold text-[#0B1F3A]">
-          Recipients will be announced soon
-        </h3>
-        <p className="mx-auto mt-2 max-w-xl text-slate-600">
-          Please check back for the inspiring individuals being recognised by
-          the Koshi Excellence Awards.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      {recipients.map((recipient) => (
-        <RecipientCard
-          key={recipient.id}
-          recipient={recipient}
-          categoryName={categories.get(Number(recipient.category_id))}
+    <div>
+      {editionYear && (
+        <FilterBanner
+          label={`Showing recipients from the ${editionYear} edition`}
+          clearTo={categorySlug ? undefined : "/recipients"}
         />
-      ))}
+      )}
+
+      {!visibleRecipients.length ? (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-16 text-center">
+          <h3 className="text-xl font-semibold text-[#0B1F3A]">
+            Recipients will be announced soon
+          </h3>
+          <p className="mx-auto mt-2 max-w-xl text-slate-600">
+            Please check back for the inspiring individuals being recognised by
+            the Koshi Excellence Awards.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {visibleRecipients.map((recipient) => (
+            <RecipientCard
+              key={recipient.id}
+              recipient={recipient}
+              categoryName={categoryMap.get(Number(recipient.category_id))}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

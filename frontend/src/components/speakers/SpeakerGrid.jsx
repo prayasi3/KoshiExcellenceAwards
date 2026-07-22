@@ -1,24 +1,27 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import SpeakerCard from "./SpeakerCard";
+import FilterBanner from "../common/FilterBanner";
+import { API_BASE_URL, extractItems } from "../../lib/api";
 
 export default function SpeakerGrid() {
   const [speakers, setSpeakers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchParams] = useSearchParams();
+  const editionYear = searchParams.get("edition");
 
-  useEffect(() => {
-    fetchSpeakers();
-  }, []);
-
-  async function fetchSpeakers() {
+  const fetchSpeakers = useCallback(async () => {
     try {
       setLoading(true);
 
-      const response = await fetch("http://localhost:5000/api/speakers");
+      const url = editionYear
+        ? `${API_BASE_URL}/speakers?limit=100&edition=${editionYear}`
+        : `${API_BASE_URL}/speakers?limit=100`;
 
+      const response = await fetch(url);
       const result = await response.json();
-
-      const data = result.data?.items || [];
+      const data = extractItems(result);
 
       const activeSpeakers = data.filter(
         (speaker) =>
@@ -27,18 +30,22 @@ export default function SpeakerGrid() {
           speaker.is_active === undefined
       );
 
-      activeSpeakers.sort((a, b) => {
-        return (a.display_order || 0) - (b.display_order || 0);
-      });
+      activeSpeakers.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
 
       setSpeakers(activeSpeakers);
+      setError("");
     } catch (err) {
       console.error(err);
       setError("Unable to load speakers.");
     } finally {
       setLoading(false);
     }
-  }
+  }, [editionYear]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(fetchSpeakers, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchSpeakers]);
 
   if (loading) {
     return (
@@ -56,28 +63,31 @@ export default function SpeakerGrid() {
     );
   }
 
-  if (speakers.length === 0) {
-    return (
-      <div className="rounded-xl border border-dashed border-slate-300 py-20 text-center">
-        <h3 className="text-2xl font-bold text-[#0B1F3A]">
-          No Speakers Found
-        </h3>
-
-        <p className="mt-3 text-slate-500">
-          Speakers will appear here after they are added.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {speakers.map((speaker) => (
-        <SpeakerCard
-          key={speaker.id}
-          speaker={speaker}
+    <div>
+      {editionYear && (
+        <FilterBanner
+          label={`Showing speakers from the ${editionYear} edition`}
+          clearTo="/speakers"
         />
-      ))}
+      )}
+
+      {speakers.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-slate-300 py-20 text-center">
+          <h3 className="text-2xl font-bold text-[#0B1F3A]">
+            No Speakers Found
+          </h3>
+          <p className="mt-3 text-slate-500">
+            Speakers will appear here after they are added.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {speakers.map((speaker) => (
+            <SpeakerCard key={speaker.id} speaker={speaker} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
