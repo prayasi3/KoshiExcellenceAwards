@@ -362,7 +362,7 @@ export default function Home() {
 
           <div className="mt-10 text-center">
             <Button to="/sponsors" icon={ArrowRight}>
-              Become a Sponsor
+              Explore Sponsors
             </Button>
           </div>
         </div>

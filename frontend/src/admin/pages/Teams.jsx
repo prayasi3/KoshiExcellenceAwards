@@ -24,6 +24,7 @@ const teamSchema = z.object({
     "chief_advisor",
     "chief_judge",
     "chairman",
+    "chief_director",
     "executive_director",
     "director",
     "member",
@@ -48,7 +49,6 @@ export default function Teams() {
   // =======================
 
   const [teams, setTeams] = useState([]);
-  const [editions, setEditions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
@@ -108,7 +108,6 @@ export default function Teams() {
 
   useEffect(() => {
     fetchTeams();
-    fetchEditions();
 }, []);
 
   // =======================
@@ -363,21 +362,16 @@ export default function Teams() {
             {/* Full Name */}
 
             <div className="mb-4">
-              <label className="block mb-2 font-medium">
-                Full Name
-              </label>
+            <label className="block mb-2 font-medium">
+              Full Name
+            </label>
 
-              <select
-                {...register("edition_id")}
+              <input
+                type="text"
+                {...register("full_name")}
                 className="w-full border rounded p-2"
-              >
-              <option value="">Select Edition</option>
-                {editions.map((edition) => (
-              <option key={edition.id} value={edition.id}>
-              {edition.title} ({edition.year})
-              </option>
-            ))}
-            </select>
+                placeholder="Enter full name"
+              />
 
               {errors.full_name && (
                 <p className="text-red-500 text-sm mt-1">
@@ -400,6 +394,7 @@ export default function Teams() {
                 <option value="chief_advisor">Chief Advisor</option>
                 <option value="chief_judge">Chief Judge</option>
                 <option value="chairman">Chairman</option>
+                <option value="chief_director">Chief Director</option>
                 <option value="executive_director">
                   Executive Director
                 </option>

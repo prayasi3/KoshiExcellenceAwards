@@ -20,6 +20,7 @@ export const Team = db.define(
         "chief_advisor",
         "chief_judge",
         "chairman",
+        "chief_director",
         "executive_director",
         "director",
         "member"

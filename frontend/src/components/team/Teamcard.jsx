@@ -6,6 +6,7 @@ const roleLabels = {
   chief_advisor: "Chief Advisor",
   chief_judge: "Chief Judge",
   chairman: "Chairman",
+  chief_director: "Chief Director",
   executive_director: "Executive Director",
   director: "Director",
   member: "Member",

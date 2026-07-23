@@ -4,6 +4,7 @@ const roleTitles = {
   chief_advisor: "Chief Advisor",
   chief_judge: "Chief Judge",
   chairman: "Chairman",
+  chief_director: "Chief Director",
   executive_director: "Executive Director",
   director: "Directors",
   member: "Members",
@@ -18,6 +19,9 @@ const roleDescriptions = {
 
   chairman:
     "Overseeing the successful planning and execution of the Koshi Excellence Award.",
+
+  chief_director:
+    "Supporting the executive committee in planning, organization, and implementation.",
 
   executive_director:
     "Managing the day-to-day operations and coordination of the award program.",

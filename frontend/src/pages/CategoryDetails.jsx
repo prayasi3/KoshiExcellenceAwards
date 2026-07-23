@@ -17,16 +17,6 @@ export default function CategoryDetails() {
 
   return (
     <>
-      <PageBanner
-        title={categoryName}
-        subtitle={`Meet the distinguished recipients recognized under the ${categoryName} category, across every edition of the Koshi Excellence Award.`}
-        breadcrumbs={[
-          { label: "Home", path: "/" },
-          { label: "Categories", path: "/categories" },
-          { label: categoryName },
-        ]}
-      />
-
       <Section className="bg-white">
         <SectionHeading
           eyebrow="Award Recipients"
