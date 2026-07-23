@@ -176,8 +176,8 @@ export default function Home() {
               <Button to="/recipients" icon={ArrowRight}>
                 View Recipients
               </Button>
-              <Button to="/news" variant="ghost">
-                Explore news coverage
+              <Button to="/gallery" variant="ghost">
+                View Event Moments
               </Button>
             </div>
           </div>
@@ -278,7 +278,7 @@ export default function Home() {
           {categories.length > 0 && (
             <div className="mt-12 text-center">
               <Button to="/categories" variant="outline">
-                View All Categories
+                View all categories
               </Button>
             </div>
           )}
