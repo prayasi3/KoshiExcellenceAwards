@@ -5,9 +5,13 @@ import {
   CalendarDays,
   Clock,
   MapPin,
+  Mic,
+  Newspaper,
+  Share2,
   Ticket,
   Quote,
   Users,
+  UserCheck,
   Sparkles,
 } from "lucide-react";
 
@@ -20,7 +24,6 @@ import aboutImage from "../assets/about-event.jpg";
 import Button from "../components/common/Button";
 import CategoryCard from "../components/categories/CategoryCard";
 import { fetchItems } from "../lib/api";
-import { useEditions } from "../context/useEditions";
 
 const SPONSOR_TIERS = [
   { tier: "Title Sponsor", label: "Title" },
@@ -106,7 +109,6 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [recipients, setRecipients] = useState([]);
-  const { editions } = useEditions();
 
   useEffect(() => {
     let isMounted = true;
@@ -129,9 +131,12 @@ export default function Home() {
   const featuredCategories = categories.slice(0, 8);
 
   const stats = [
-    { value: "16", label: "Award Categories" },
-    { value: editions.length ? String(editions.length) : "1", label: editions.length > 1 ? "Editions Held" : "Inaugural Edition" },
-    { value: "1", label: "Province, One Night" },
+    { value: "16+", label: "Award Categories", icon: Award },
+    { value: "15+", label: "Honorees", icon: Users },
+    { value: "575+", label: "Participants", icon: UserCheck },
+    { value: "15+", label: "Speakers", icon: Mic },
+    { value: "75+", label: "Digital & Print Reach", icon: Newspaper },
+    { value: "5M+", label: "Social Media Reach", icon: Share2 },
   ];
 
   return (
@@ -171,22 +176,29 @@ export default function Home() {
               <Button to="/recipients" icon={ArrowRight}>
                 View Recipients
               </Button>
-              <Button to="/categories" variant="ghost">
-                Explore Categories
+              <Button to="/news" variant="ghost">
+                Explore news coverage
               </Button>
-            </div>
-
-            <div className="mt-14 flex flex-wrap gap-10 border-t border-white/15 pt-8">
-              {stats.map((stat) => (
-                <div key={stat.label}>
-                  <p className="font-heading text-4xl font-bold text-[#C9A84C]">{stat.value}</p>
-                  <p className="mt-1 text-sm text-gray-300">{stat.label}</p>
-                </div>
-              ))}
             </div>
           </div>
         </div>
       </header>
+
+      {/* ── Stats strip (overlaps the hero, like the reference design) ── */}
+<section className="relative z-10 mx-auto -mt-16 w-full max-w-6xl px-5 md:px-10">
+  <Reveal className="flex flex-wrap justify-center gap-y-8 rounded-3xl bg-white px-6 py-9 shadow-xl sm:px-10 lg:flex-nowrap lg:justify-between">
+    {stats.map((stat) => (
+      <div key={stat.label} className="min-w-[130px] flex-1 px-3 text-center">
+        <p className="font-heading text-3xl font-bold text-[#0B1F3A] sm:text-4xl">
+          {stat.value}
+        </p>
+        <p className="mt-1.5 whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-slate-500">
+          {stat.label}
+        </p>
+      </div>
+    ))}
+  </Reveal>
+</section>
 
       {/* ── About ── */}
       <section className="bg-white py-20 sm:py-24">
@@ -362,7 +374,7 @@ export default function Home() {
 
           <div className="mt-10 text-center">
             <Button to="/sponsors" icon={ArrowRight}>
-              Explore Sponsors
+              Explore our sponsors
             </Button>
           </div>
         </div>
