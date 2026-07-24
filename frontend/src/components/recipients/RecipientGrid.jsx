@@ -70,12 +70,25 @@ export default function RecipientGrid({ categorySlug }) {
 );
 
   const activeCategory = categorySlug
-    ? categories.find((category) => category.slug === categorySlug)
-    : null;
+  ? categories.find((category) => category.slug === categorySlug)
+  : null;
 
-  const visibleRecipients = activeCategory
+const visibleRecipients = (
+  activeCategory
     ? recipients.filter((recipient) => Number(recipient.category_id) === Number(activeCategory.id))
-    : recipients;
+    : recipients
+)
+  .slice()
+  .sort((a, b) => {
+    const categoryA = categoryMap.get(Number(a.category_id)) || "";
+    const categoryB = categoryMap.get(Number(b.category_id)) || "";
+    const categoryComparison = categoryA.localeCompare(categoryB);
+    if (categoryComparison !== 0) return categoryComparison;
+
+    const nameA = a.full_name || "";
+    const nameB = b.full_name || "";
+    return nameA.localeCompare(nameB);
+  });
 
   if (loading) {
     return (

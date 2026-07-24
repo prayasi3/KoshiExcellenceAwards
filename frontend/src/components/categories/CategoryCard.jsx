@@ -1,9 +1,13 @@
 // src/components/categories/CategoryCard.jsx
 
+import { createElement } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Award } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { getCategoryIcon } from "../../lib/categoryIcons";
 
 export default function CategoryCard({ category }) {
+  const icon = getCategoryIcon(category.category_name);
+
   return (
     <Link
       to={`/categories/${category.slug}`}
@@ -35,7 +39,7 @@ export default function CategoryCard({ category }) {
           text-[#C9A84C]
         "
       >
-        <Award size={28} />
+        {createElement(icon, { size: 28 })}
       </div>
 
       <h3
@@ -64,7 +68,7 @@ export default function CategoryCard({ category }) {
           text-[#C9A84C]
         "
       >
-        View Awarded
+        View Category
 
         <ArrowRight
           size={18}
