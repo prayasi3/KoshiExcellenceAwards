@@ -4,7 +4,7 @@ export default function RecipientDetails({ recipient, categoryName }) {
   const edition = recipient.Edition || recipient.edition;
   const editionLabel =
     edition?.title ||
-    (edition?.year ? `${edition.year} Edition` : "Koshi Excellence Awards");
+    (edition?.year ? `${edition.year} Edition` : "");
 
   return (
     <div className="p-6">

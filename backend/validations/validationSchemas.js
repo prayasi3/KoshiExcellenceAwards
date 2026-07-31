@@ -263,3 +263,12 @@ export const teamSchemas = {
     })
   ),
 };
+
+export const contactSchemas = {
+  create: z.object({
+    name: requiredString("Name"),
+    email: requiredString("Email").email("Email must be valid"),
+    subject: optionalString(),
+    message: requiredString("Message", 5000),
+  }),
+};

@@ -3,14 +3,11 @@ export default function SectionHeading({
   title,
   subtitle,
   description,
-  center = false,
-  align,
 }) {
-  const isCentered = center || align === "center";
   const body = subtitle ?? description;
 
   return (
-    <div className={`mb-12 ${isCentered ? "mx-auto text-center" : ""}`}>
+    <div className="mb-12 flex w-full flex-col items-center text-center">
       {eyebrow && (
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
           {eyebrow}
@@ -22,7 +19,7 @@ export default function SectionHeading({
       </h2>
 
       {body && (
-        <p className={`mt-4 max-w-3xl text-gray-600 leading-7 ${isCentered ? "mx-auto" : ""}`}>
+        <p className="mt-4 max-w-3xl text-center text-gray-600 leading-7">
           {body}
         </p>
       )}

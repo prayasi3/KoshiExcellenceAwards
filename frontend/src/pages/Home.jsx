@@ -5,17 +5,14 @@ import {
   CalendarDays,
   Clock,
   MapPin,
-  Mic,
-  Newspaper,
-  Share2,
   Ticket,
   Quote,
   Users,
-  UserCheck,
   Sparkles,
 } from "lucide-react";
 
 import trophy from "../assets/trophy-transparent.svg";
+import realisticTrophy from "../assets/realistic-trophy-transparent.png";
 import organizerLogo from "../assets/organizer.png";
 import managerLogo from "../assets/manager.png";
 import pradesKhabarLogo from "../assets/prades-khabar.png";
@@ -24,13 +21,6 @@ import aboutImage from "../assets/about-event.jpg";
 import Button from "../components/common/Button";
 import CategoryCard from "../components/categories/CategoryCard";
 import { fetchItems } from "../lib/api";
-
-const SPONSOR_TIERS = [
-  { tier: "Title Sponsor", label: "Title" },
-  { tier: "Gold Sponsor", label: "Gold" },
-  { tier: "Silver Sponsor", label: "Silver" },
-  { tier: "Associate Sponsor", label: "Associate" },
-];
 
 const EVENT_DETAILS = [
   { icon: CalendarDays, title: "Date", value: "March 21, 2026", note: "Saturday Evening" },
@@ -105,10 +95,53 @@ function HeroSlideshow({ slides }) {
   );
 }
 
+function sponsorInitials(name = "") {
+  return (
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase() || "KEA"
+  );
+}
+
+function SponsorLogo({ sponsor }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const hasLogo = sponsor.logo_url && !imageFailed;
+
+  const content = hasLogo ? (
+    <img
+      src={sponsor.logo_url}
+      alt={sponsor.sponsor_name}
+      onError={() => setImageFailed(true)}
+      className="max-h-12 max-w-full object-contain"
+    />
+  ) : (
+    <span className="font-heading text-lg font-bold text-[#0B1F3A]">
+      {sponsorInitials(sponsor.sponsor_name)}
+    </span>
+  );
+
+  const className =
+    "mx-4 flex h-24 w-48 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 grayscale transition duration-300 hover:grayscale-0 hover:shadow-md";
+
+  return sponsor.website ? (
+    <a href={sponsor.website} target="_blank" rel="noreferrer" className={className}>
+      {content}
+    </a>
+  ) : (
+    <div className={className}>{content}</div>
+  );
+}
+
 export default function Home() {
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [recipients, setRecipients] = useState([]);
+  const [sponsors, setSponsors] = useState([]);
+  const [sponsorsLoading, setSponsorsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -122,6 +155,16 @@ export default function Home() {
       .then((items) => isMounted && setRecipients(items))
       .catch(() => {});
 
+    fetchItems("/sponsors?limit=100")
+      .then((items) => {
+        if (!isMounted) return;
+        setSponsors(
+          items.slice().sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+        );
+      })
+      .catch(() => {})
+      .finally(() => isMounted && setSponsorsLoading(false));
+
     return () => {
       isMounted = false;
     };
@@ -131,12 +174,13 @@ export default function Home() {
   const featuredCategories = categories.slice(0, 8);
 
   const stats = [
-    { value: "16+", label: "Award Categories", icon: Award },
-    { value: "15+", label: "Honorees", icon: Users },
-    { value: "575+", label: "Participants", icon: UserCheck },
-    { value: "15+", label: "Speakers", icon: Mic },
-    { value: "75+", label: "Digital & Print Reach", icon: Newspaper },
-    { value: "5M+", label: "Social Media Reach", icon: Share2 },
+    { value: "16+", label: "Categories" },
+    { value: "15+", label: "Honorees" },
+    { value: "575+", label: "Participants" },
+    { value: "5", label: "Hours of Event" },
+    { value: "15+", label: "Speakers" },
+    { value: "75+", label: "Digital & Print" },
+    { value: "5M+", label: "Social Media Reached" },
   ];
 
   return (
@@ -156,7 +200,7 @@ export default function Home() {
           aria-hidden="true"
         />
 
-        <div className="relative mx-auto w-full max-w-7xl px-5 py-24 md:px-10">
+        <div className="relative mx-auto flex w-full max-w-7xl items-center px-5 py-24 md:px-10">
           <div className="max-w-3xl">
             <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.3em] text-[#C9A84C]">
               <Sparkles size={16} aria-hidden="true" />
@@ -176,29 +220,46 @@ export default function Home() {
               <Button to="/recipients" icon={ArrowRight}>
                 View Recipients
               </Button>
-              <Button to="/gallery" variant="ghost">
-                View Event Moments
+              <Button to="/categories" variant="ghost">
+                Explore Categories
               </Button>
             </div>
+          </div>
+
+          {/* Rotating trophy — decorative, hidden on smaller screens to avoid crowding the text */}
+          <div className="trophy-spin-stage pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 lg:block xl:right-10">
+            <div
+              className="absolute inset-0 -z-10 rounded-full blur-3xl"
+              style={{
+                background:
+                  "radial-gradient(closest-side, rgba(201,168,76,0.45), rgba(201,168,76,0) 70%)",
+              }}
+              aria-hidden="true"
+            />
+            <img
+              src={realisticTrophy}
+              alt="Koshi Excellence Award trophy"
+              className="trophy-spin h-80 w-80 object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.45)] xl:h-96 xl:w-96"
+            />
           </div>
         </div>
       </header>
 
       {/* ── Stats strip (overlaps the hero, like the reference design) ── */}
-<section className="relative z-10 mx-auto -mt-16 w-full max-w-6xl px-5 md:px-10">
-  <Reveal className="flex flex-wrap justify-center gap-y-8 rounded-3xl bg-white px-6 py-9 shadow-xl sm:px-10 lg:flex-nowrap lg:justify-between">
-    {stats.map((stat) => (
-      <div key={stat.label} className="min-w-[130px] flex-1 px-3 text-center">
-        <p className="font-heading text-3xl font-bold text-[#0B1F3A] sm:text-4xl">
-          {stat.value}
-        </p>
-        <p className="mt-1.5 whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-slate-500">
-          {stat.label}
-        </p>
-      </div>
-    ))}
-  </Reveal>
-</section>
+      <section className="relative z-10 mx-auto -mt-16 w-full max-w-6xl px-5 md:px-10">
+        <Reveal className="flex flex-wrap justify-center gap-y-8 rounded-3xl bg-white px-6 py-9 shadow-xl sm:px-10 lg:flex-nowrap lg:justify-between">
+          {stats.map((stat) => (
+            <div key={stat.label} className="min-w-[130px] flex-1 px-3 text-center">
+              <p className="font-heading text-3xl font-bold text-[#0B1F3A] sm:text-4xl">
+                {stat.value}
+              </p>
+              <p className="mt-1.5 whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-slate-500">
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </Reveal>
+      </section>
 
       {/* ── About ── */}
       <section className="bg-white py-20 sm:py-24">
@@ -223,8 +284,8 @@ export default function Home() {
               agricultural innovators to cultural custodians, the award
               celebrates the full breadth of human achievement in our province.
             </p>
-            <Button to="/categories" variant="outline" className="mt-8" icon={ArrowRight}>
-              View Categories
+            <Button to="/teams" variant="outline" className="mt-8" icon={ArrowRight}>
+              Meet Our Team
             </Button>
           </Reveal>
 
@@ -278,7 +339,7 @@ export default function Home() {
           {categories.length > 0 && (
             <div className="mt-12 text-center">
               <Button to="/categories" variant="outline">
-                View all categories
+                View All Categories
               </Button>
             </div>
           )}
@@ -346,35 +407,41 @@ export default function Home() {
 
       {/* ── Sponsors ── */}
       <section className="bg-[#F2F4F7] py-20 sm:py-24">
-        <div className="mx-auto max-w-5xl px-5 md:px-10">
+        <div className="mx-auto max-w-6xl px-5 md:px-10">
           <Reveal className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
-              Partnership Opportunities
+              Our Sponsors
             </p>
-            <h2 className="mt-3 font-heading text-4xl font-bold text-[#0B1F3A]">Our Sponsors</h2>
+            <h2 className="mt-3 font-heading text-4xl font-bold text-[#0B1F3A]">
+              Sponsors We're Proud Of
+            </h2>
             <p className="mt-4 leading-7 text-gray-600">
-              Align your brand with excellence. Sponsorship packages are
-              available across four tiers.
+              Trusted by leading organisations across Koshi Province who make
+              this award possible.
             </p>
           </Reveal>
 
-          <Reveal className="mt-12 space-y-4">
-            {SPONSOR_TIERS.map((sponsor) => (
-              <div
-                key={sponsor.tier}
-                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm"
-              >
-                <span className="rounded-full bg-[#F5ECD0] px-4 py-1.5 text-sm font-bold uppercase tracking-wide text-[#9A7A25]">
-                  {sponsor.label}
-                </span>
-                <span className="text-gray-400">Your brand here</span>
+          <Reveal className="mt-14">
+            {sponsorsLoading ? (
+              <p className="text-center text-slate-500">Loading sponsors...</p>
+            ) : sponsors.length ? (
+              <div className="sponsor-marquee">
+                <div className="sponsor-marquee__track">
+                  {[...sponsors, ...sponsors].map((sponsor, index) => (
+                    <SponsorLogo key={`${sponsor.id}-${index}`} sponsor={sponsor} />
+                  ))}
+                </div>
               </div>
-            ))}
+            ) : (
+              <p className="text-center text-slate-500">
+                Sponsors will be announced soon.
+              </p>
+            )}
           </Reveal>
 
-          <div className="mt-10 text-center">
-            <Button to="/sponsors" icon={ArrowRight}>
-              Explore our sponsors
+          <div className="mt-14 text-center">
+            <Button to="/contact" icon={ArrowRight}>
+              Become a Sponsor
             </Button>
           </div>
         </div>

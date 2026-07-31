@@ -15,7 +15,7 @@ export default function Categories() {
             eyebrow="Recognition"
             title="Explore Our Award Categories"
             description="Each category honors exceptional contributions in different fields. Discover the individuals who have inspired communities through dedication, leadership, innovation, and service."
-            align="center"
+            align=""
           />
 
           <CategoryGrid />

@@ -4,7 +4,7 @@ export default function HonoreeDetails({ honoree }) {
   const edition = honoree.Edition || honoree.edition;
   const editionLabel =
     edition?.title ||
-    (edition?.year ? `${edition.year} Edition` : "Koshi Excellence Award");
+    (edition?.year ? `${edition.year} Edition` : "");
 
   return (
     <div className="p-6">

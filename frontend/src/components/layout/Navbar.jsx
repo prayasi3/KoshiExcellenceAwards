@@ -4,6 +4,7 @@ import { Menu, X, ChevronDown, CalendarRange } from "lucide-react";
 import "./Navbar.css";
 
 import logo from "../../assets/trophy-transparent.svg";
+import logonav from "../../assets/kea.svg";
 import { useEditions } from "../../context/useEditions";
 
 // Each entry describes a nav item. Items with `buildEditionLink` get a
@@ -76,13 +77,6 @@ export default function Navbar() {
               alt="Koshi Excellence Award"
               className="logo-image"
             />
-            <span className="logo-text">
-              Koshi 
-              <br />
-              <span className="logo-text__accent">Excellence</span> 
-              <br />
-              Award
-            </span>
           </NavLink>
 
           {/* Desktop Navigation */}

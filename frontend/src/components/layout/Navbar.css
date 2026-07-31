@@ -37,7 +37,6 @@
     flex-shrink:0;
     display:flex;
     align-items:center;
-    gap:10px;
     text-decoration:none;
 }
 
@@ -324,6 +323,15 @@
 @media (max-width:480px){
     .logo-text{
         display:none;
+    }
+    .navbar-container{
+        padding:0 16px;
+    }
+}
+
+@media (max-width:480px){
+    .logo-image{
+        height:40px;
     }
     .navbar-container{
         padding:0 16px;

@@ -7,6 +7,7 @@ import { connectDB } from "./config/db.js";
 
 import { authRoutes } from "./routes/authRoutes.js";
 import { categoryRoutes } from "./routes/categoryRoutes.js";
+import { contactRoutes } from "./routes/contactRoutes.js";
 import { editionRoutes } from "./routes/editionRoutes.js";
 import { galleryRoutes } from "./routes/galleryRoutes.js";
 import { honoreeRoutes } from "./routes/honoreeRoutes.js";
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/editions", editionRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/contacts", contactRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/recipients", recipientRoutes);
 app.use("/api/honorees", honoreeRoutes);

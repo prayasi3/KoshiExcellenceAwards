@@ -20,6 +20,24 @@ export async function fetchJson(url) {
   return response.json();
 }
 
+/** Posts JSON to an endpoint and returns the parsed response, throwing a
+ *  readable error (using the API's own message when available) on failure. */
+export async function postJson(path, body) {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(payload?.message || "Something went wrong. Please try again.");
+  }
+
+  return payload;
+}
+
 /** Fetches a list endpoint and returns a plain array of items. */
 export async function fetchItems(path) {
   const payload = await fetchJson(`${API_BASE_URL}${path}`);

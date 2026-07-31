@@ -141,3 +141,53 @@ ol{
   margin:0;
   padding:0;
 }
+
+/* ── Rotating hero trophy (pseudo-3D via CSS perspective) ── */
+.trophy-spin-stage{
+  perspective:1400px;
+}
+
+.trophy-spin{
+  transform-style:preserve-3d;
+  animation:trophy-spin 9s linear infinite;
+  will-change:transform;
+}
+
+@keyframes trophy-spin{
+  from{ transform:rotateY(0deg); }
+  to{ transform:rotateY(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .trophy-spin{
+    animation:none;
+  }
+}
+
+/* ── Sponsor logo marquee (homepage "Sponsors We're Proud Of" strip) ── */
+.sponsor-marquee{
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  mask-image:linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+
+.sponsor-marquee__track{
+  display:flex;
+  width:max-content;
+  animation:sponsor-marquee 30s linear infinite;
+}
+
+.sponsor-marquee:hover .sponsor-marquee__track{
+  animation-play-state:paused;
+}
+
+@keyframes sponsor-marquee{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .sponsor-marquee__track{
+    animation:none;
+  }
+}
