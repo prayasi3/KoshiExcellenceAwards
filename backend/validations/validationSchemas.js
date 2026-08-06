@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-const emptyToUndefined = (value) => (value === "" ? undefined : value);
+const emptyToNull = (value) => (value === "" ? null : value);
 
 const optionalString = (max = 255) =>
   z.preprocess(
-    emptyToUndefined,
+    emptyToNull,
     z.string().trim().max(max).optional().nullable()
   );
 
@@ -18,7 +18,7 @@ const requiredString = (field, max = 255) =>
     .max(max);
 
 const optionalPositiveInt = z.preprocess(
-  emptyToUndefined,
+  emptyToNull,
   z.coerce.number().int().positive().optional().nullable()
 );
 
@@ -35,12 +35,12 @@ export const idParamSchema = z.object({
 });
 
 const optionalDate = z.preprocess(
-  emptyToUndefined,
+  emptyToNull,
   z.coerce.date().optional().nullable()
 );
 
 const optionalDateOnly = z.preprocess(
-  emptyToUndefined,
+  emptyToNull,
   z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must use YYYY-MM-DD format")

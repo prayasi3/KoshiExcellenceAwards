@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 import trophy from "../assets/trophy-transparent.svg";
-import realisticTrophy from "../assets/realistic-trophy-transparent.png";
 import organizerLogo from "../assets/organizer.png";
 import managerLogo from "../assets/manager.png";
 import pradesKhabarLogo from "../assets/prades-khabar.png";
@@ -20,6 +19,7 @@ import aboutImage from "../assets/about-event.jpg";
 
 import Button from "../components/common/Button";
 import CategoryCard from "../components/categories/CategoryCard";
+import HeroVideo from "../components/home/HeroVideo";
 import { fetchItems } from "../lib/api";
 
 const EVENT_DETAILS = [
@@ -187,77 +187,38 @@ export default function Home() {
     <div>
       {/* ── Hero ── */}
       <header className="relative flex min-h-[92vh] items-center overflow-hidden bg-[#0B1F3A] text-white">
-        <HeroSlideshow slides={slideshowRecipients} />
+        <HeroVideo src="/videos/award-finalized.mp4" poster={aboutImage} />
 
         {/* Overlay for legibility + brand radial gold accent */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F3A] via-[#0B1F3A]/85 to-[#0B1F3A]/60" />
         <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(55% 75% at 80% 10%, rgba(201,168,76,0.35) 0%, rgba(201,168,76,0) 60%)",
-          }}
-          aria-hidden="true"
-        />
+          className="relative mx-auto flex w-full max-w-7xl items-center px-5 py-24 md:px-10"
+          style={{ textShadow: "0 2px 18px rgba(0,0,0,0.55)" }}
+        ></div>
 
         <div className="relative mx-auto flex w-full max-w-7xl items-center px-5 py-24 md:px-10">
           <div className="max-w-3xl">
-            <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.3em] text-[#C9A84C]">
-              <Sparkles size={16} aria-hidden="true" />
-              The Most Prestigious Award of Koshi Province
-            </p>
+            
 
-            <h1 className="mt-6 font-heading text-5xl font-bold leading-tight sm:text-6xl lg:text-7xl">
-              Koshi <span className="text-[#C9A84C]">Excellence</span> Award
-            </h1>
-
-            <p className="mt-6 max-w-xl text-lg leading-8 text-gray-200">
-              Recognising the achievers who shape Koshi Province across industry,
-              culture, and community.
-            </p>
-
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Button to="/recipients" icon={ArrowRight}>
-                View Recipients
-              </Button>
-              <Button to="/categories" variant="ghost">
-                Explore Categories
-              </Button>
-            </div>
+            
           </div>
 
-          {/* Rotating trophy — decorative, hidden on smaller screens to avoid crowding the text */}
-          <div className="trophy-spin-stage pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 lg:block xl:right-10">
-            <div
-              className="absolute inset-0 -z-10 rounded-full blur-3xl"
-              style={{
-                background:
-                  "radial-gradient(closest-side, rgba(201,168,76,0.45), rgba(201,168,76,0) 70%)",
-              }}
-              aria-hidden="true"
-            />
-            <img
-              src={realisticTrophy}
-              alt="Koshi Excellence Award trophy"
-              className="trophy-spin h-80 w-80 object-contain drop-shadow-[0_25px_35px_rgba(0,0,0,0.45)] xl:h-96 xl:w-96"
-            />
-          </div>
+          
         </div>
       </header>
 
       {/* ── Stats strip (overlaps the hero, like the reference design) ── */}
       <section className="relative z-10 mx-auto -mt-16 w-full max-w-6xl px-5 md:px-10">
-        <Reveal className="flex flex-wrap justify-center gap-y-8 rounded-3xl bg-white px-6 py-9 shadow-xl sm:px-10 lg:flex-nowrap lg:justify-between">
+        <Reveal className="flex flex-wrap justify-center divide-y divide-slate-100 rounded-3xl bg-white px-6 py-9 shadow-xl sm:px-10 lg:flex-nowrap lg:divide-x lg:divide-y-0">
           {stats.map((stat) => (
-            <div key={stat.label} className="min-w-[130px] flex-1 px-3 text-center">
-              <p className="font-heading text-3xl font-bold text-[#0B1F3A] sm:text-4xl">
+            <div key={stat.label} className="min-w-[130px] flex-1 px-5 py-4 text-center lg:py-0">
+              <p className="font-sans text-3xl font-extrabold tracking-tight text-[#0B1F3A] sm:text-4xl">
                 {stat.value}
-              </p>
-              <p className="mt-1.5 whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-slate-500">
+               </p>
+              <p className="mt-2 whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
                 {stat.label}
               </p>
             </div>
-          ))}
+        ))}
         </Reveal>
       </section>
 
@@ -363,10 +324,12 @@ export default function Home() {
                   <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#F5ECD0] text-[#0B1F3A]">
                     <item.icon size={26} aria-hidden="true" />
                   </div>
-                  <h3 className="mt-5 text-sm font-semibold uppercase tracking-wider text-gray-500">
-                    {item.title}
+                  <h3 className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+  {item.title}
                   </h3>
-                  <p className="mt-2 font-heading text-xl font-bold text-[#0B1F3A]">{item.value}</p>
+                  <p className="mt-2 font-sans text-lg font-bold tracking-tight text-[#0B1F3A]">
+                    {item.value}
+                  </p>
                   <p className="mt-1 text-sm text-gray-500">{item.note}</p>
                 </div>
               </Reveal>

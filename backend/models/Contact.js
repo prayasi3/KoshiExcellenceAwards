@@ -9,7 +9,7 @@ export const Contact = db.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    name: {
+    full_name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
