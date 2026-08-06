@@ -289,7 +289,7 @@ export default function Home() {
             ) : featuredCategories.length ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {featuredCategories.map((category) => (
-                  <CategoryCard key={category.id} category={category} />
+                  <CategoryCard key={category.id} category={category} hideDescription />
                 ))}
               </div>
             ) : (

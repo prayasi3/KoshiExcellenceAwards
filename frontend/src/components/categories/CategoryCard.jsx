@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { getCategoryIcon } from "../../lib/categoryIcons";
 
-export default function CategoryCard({ category }) {
+export default function CategoryCard({ category, hideDescription = false }) {
   const icon = getCategoryIcon(category.category_name);
 
   return (
@@ -43,21 +43,23 @@ export default function CategoryCard({ category }) {
       </div>
 
       <h3
-        className="
-          mb-3
+        className={`
           text-2xl
           font-bold
           text-[#0B1F3A]
           transition-colors
           group-hover:text-[#C9A84C]
-        "
+          ${hideDescription ? "mb-2" : "mb-3"}
+        `}
       >
         {category.category_name}
       </h3>
 
-      <p className="mb-6 text-gray-600 leading-7">
-        {category.description}
-      </p>
+      {!hideDescription && (
+        <p className="mb-6 text-gray-600 leading-7">
+          {category.description}
+        </p>
+      )}
 
       <div
         className="
@@ -68,7 +70,7 @@ export default function CategoryCard({ category }) {
           text-[#C9A84C]
         "
       >
-        View Category
+        View Awarded
 
         <ArrowRight
           size={18}
