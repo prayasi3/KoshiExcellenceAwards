@@ -5,7 +5,6 @@ import { contactSchemas } from "../validations/validationSchemas.js";
 
 const router = express.Router();
 
-// Public: anyone can submit the contact form.
 router.post("/", validateBody(contactSchemas.create), submitContactMessage);
 
 export const contactRoutes = router;

@@ -9,7 +9,6 @@ export default function Contact() {
       <PageBanner
         title="Contact Us"
         subtitle="Have a question about the Koshi Excellence Award, nominations, or sponsorships? Send us a message and our team will get back to you."
-        breadcrumbs={[{ label: "Home", path: "/" }, { label: "Contact" }]}
       />
 
       <Section className="bg-white">
@@ -24,7 +23,8 @@ export default function Contact() {
             <p className="mt-4 leading-7 text-slate-600">
               Whether you're interested in nominating someone, becoming a
               sponsor, or just want to learn more about the awards, reach out
-              using the details below or fill out the form.
+              using the details below or send us a message directly on
+              WhatsApp.
             </p>
 
             <div className="mt-8">

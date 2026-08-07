@@ -266,8 +266,9 @@ export const teamSchemas = {
 
 export const contactSchemas = {
   create: z.object({
-    name: requiredString("Name"),
+    full_name: requiredString("Name"),
     email: requiredString("Email").email("Email must be valid"),
+    phone: optionalString(50),
     subject: optionalString(),
     message: requiredString("Message", 5000),
   }),

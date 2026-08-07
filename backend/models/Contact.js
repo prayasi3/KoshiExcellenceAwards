@@ -9,30 +9,16 @@ export const Contact = db.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    full_name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    subject: {
-      type: DataTypes.STRING,
-    },
-    message: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    status: {
-      type: DataTypes.ENUM("new", "read", "replied"),
-      defaultValue: "new",
-    },
+    full_name: { type: DataTypes.STRING },
+    email: { type: DataTypes.STRING },
+    phone: { type: DataTypes.STRING(50) },
+    subject: { type: DataTypes.STRING },
+    message: { type: DataTypes.TEXT },
   },
   {
     tableName: "contacts",
     timestamps: true,
     createdAt: "created_at",
-    updatedAt: "updated_at",
+    updatedAt: false,
   }
 );
