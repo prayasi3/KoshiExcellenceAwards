@@ -7,7 +7,7 @@ const initialForm = { full_name: "", email: "", phone: "", subject: "", message:
 // TODO: replace with your organisation's real WhatsApp number, in full
 // international format with digits only — no "+", spaces, or leading 0.
 // e.g. Nepal number 98X-XXX-XXXX with country code 977 becomes "9779800000000"
-const WHATSAPP_NUMBER = "9779824307546";
+const WHATSAPP_NUMBER = "9779852048996";
 
 function buildWhatsAppMessage(form) {
   const lines = [
