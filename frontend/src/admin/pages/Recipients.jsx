@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { getEditions, getEditionCategories } from "../services/editionService";
 import { getCategories } from "../services/categoryService";
+import FacebookMedia from "../../components/common/FacebookMedia";
 
 import {
   getRecipients,
@@ -310,10 +311,16 @@ export default function Recipients() {
 
                   <td className="border p-3">
                     {recipient.photo_url ? (
-                      <img
+                      <FacebookMedia
                         src={recipient.photo_url}
                         alt={recipient.full_name}
                         className="h-12 w-12 rounded object-cover"
+                        onError={() => {}}
+                        placeholder={
+                          <div className="flex h-12 w-12 items-center justify-center rounded bg-slate-100 text-sm text-slate-500">
+                            -
+                          </div>
+                        }
                       />
                     ) : (
                       "-"

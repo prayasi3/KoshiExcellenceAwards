@@ -1,19 +1,27 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import FacebookMedia from "../common/FacebookMedia";
 
 export default function SpeakerCard({ speaker }) {
+  const [imageFailed, setImageFailed] = useState(false);
   return (
     <Link
       to={`/speakers/${speaker.id}`}
       className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
     >
       <div className="aspect-[4/5] overflow-hidden bg-gray-100">
-        <img
-          src={
-            speaker.image_url ||
-            "https://placehold.co/500x600?text=Speaker"
-          }
+        <FacebookMedia
+          src={speaker.image_url}
           alt={speaker.name}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          onError={() => setImageFailed(true)}
+          placeholder={
+            <img
+              src="https://placehold.co/500x600?text=Speaker"
+              alt={speaker.name}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          }
         />
       </div>
 

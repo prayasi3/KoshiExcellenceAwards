@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { getEditions } from "../services/editionService";
+import FacebookMedia from "../../components/common/FacebookMedia";
 
 import {
   getTeams,
@@ -278,10 +279,16 @@ export default function Teams() {
 
                     <td className="border p-3">
                       {team.photo_url ? (
-                        <img
+                        <FacebookMedia
                           src={team.photo_url}
                           alt={team.full_name}
                           className="w-14 h-14 object-cover rounded-full"
+                          onError={() => {}}
+                          placeholder={
+                            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-sm text-slate-500">
+                              -
+                            </div>
+                          }
                         />
                       ) : (
                         "-"

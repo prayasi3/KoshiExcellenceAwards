@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import FacebookMedia from "../common/FacebookMedia";
 
 export default function SpeakerDetails({ speaker }) {
   if (!speaker) return null;
@@ -14,13 +15,17 @@ export default function SpeakerDetails({ speaker }) {
 
       <div className="grid gap-12 lg:grid-cols-2">
         <div>
-          <img
-            src={
-              speaker.image_url ||
-              "https://placehold.co/600x700?text=Speaker"
-            }
+          <FacebookMedia
+            src={speaker.image_url}
             alt={speaker.name}
             className="w-full rounded-2xl object-cover shadow-lg"
+            placeholder={
+              <img
+                src="https://placehold.co/600x700?text=Speaker"
+                alt={speaker.name}
+                className="w-full rounded-2xl object-cover shadow-lg"
+              />
+            }
           />
         </div>
 

@@ -20,7 +20,8 @@ import aboutImage from "../assets/about-event.jpg";
 import Button from "../components/common/Button";
 import CategoryCard from "../components/categories/CategoryCard";
 import HeroVideo from "../components/home/HeroVideo";
-import { fetchItems } from "../lib/api";
+import FacebookMedia from "../components/common/FacebookMedia";
+import { fetchItems, getCategorySlug } from "../lib/api";
 
 const EVENT_DETAILS = [
   { icon: CalendarDays, title: "Date", value: "March 21, 2026", note: "Saturday Evening" },
@@ -81,14 +82,14 @@ function HeroSlideshow({ slides }) {
   return (
     <div className="absolute inset-0">
       {slides.map((slide, index) => (
-        <img
-          key={slide.id ?? index}
+        <FacebookMedia
+          key={`slide-${slide.id ?? slide.full_name ?? "recipient"}-${index}`}
           src={slide.photo_url}
           alt=""
-          aria-hidden="true"
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1800ms] ease-in-out ${
             index === active ? "opacity-100" : "opacity-0"
           }`}
+          placeholder={<div className="absolute inset-0 bg-gradient-to-br from-[#0B1F3A] via-[#122a4d] to-[#0B1F3A]" />}
         />
       ))}
     </div>
@@ -112,11 +113,16 @@ function SponsorLogo({ sponsor }) {
   const hasLogo = sponsor.logo_url && !imageFailed;
 
   const content = hasLogo ? (
-    <img
+    <FacebookMedia
       src={sponsor.logo_url}
       alt={sponsor.sponsor_name}
       onError={() => setImageFailed(true)}
       className="max-h-12 max-w-full object-contain"
+      placeholder={
+        <span className="font-heading text-lg font-bold text-[#0B1F3A]">
+          {sponsorInitials(sponsor.sponsor_name)}
+        </span>
+      }
     />
   ) : (
     <span className="font-heading text-lg font-bold text-[#0B1F3A]">
@@ -288,8 +294,12 @@ export default function Home() {
               <p className="text-center text-gray-300">Loading categories...</p>
             ) : featuredCategories.length ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {featuredCategories.map((category) => (
-                  <CategoryCard key={category.id} category={category} hideDescription />
+                {featuredCategories.map((category, index) => (
+                  <CategoryCard
+                    key={`category-${category.id ?? getCategorySlug(category) ?? "item"}-${index}`}
+                    category={category}
+                    hideDescription
+                  />
                 ))}
               </div>
             ) : (

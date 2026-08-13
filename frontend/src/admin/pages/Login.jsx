@@ -37,12 +37,10 @@ export default function Login() {
       setLoading(true);
       setServerError("");
 
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        data
-      );
+      const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const res = await axios.post(`${API_BASE}/auth/login`, data);
 
-     const token = res.data.data.token;
+      const token = res.data.data.token;
 
       login({
         token,

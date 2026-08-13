@@ -3,7 +3,13 @@ import { useSearchParams } from "react-router-dom";
 
 import RecipientCard from "./RecipientCard";
 import FilterBanner from "../common/FilterBanner";
-import { API_BASE_URL, extractItems, fetchJson } from "../../lib/api";
+import {
+  API_BASE_URL,
+  extractItems,
+  fetchJson,
+  getCategorySlug,
+  toSlug,
+} from "../../lib/api";
 
 /**
  * Shows recipients. Pass `categorySlug` to show every recipient ever
@@ -62,16 +68,11 @@ export default function RecipientGrid({ categorySlug }) {
     categories.map((category) => [Number(category.id), category.category_name])
   );
 
-  console.log("URL slug:", categorySlug);
-  console.log("Categories:", categories);
-  console.log(
-  "Matched category:",
-  categories.find((category) => category.slug === categorySlug)
-);
-
   const activeCategory = categorySlug
-  ? categories.find((category) => category.slug === categorySlug)
-  : null;
+    ? categories.find(
+        (category) => getCategorySlug(category) === toSlug(categorySlug)
+      )
+    : null;
 
 const visibleRecipients = (
   activeCategory

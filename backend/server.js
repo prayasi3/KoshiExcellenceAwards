@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // IMPORTANT: ensure DB initializes
 import { connectDB } from "./config/db.js";
@@ -25,13 +27,27 @@ dotenv.config();
 
 const app = express();
 
+app.set("trust proxy", true);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // middleware
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // test route
 app.get("/", (req, res) => {
   return sendSuccess(res, 200, "Backend running", {
+    service: "Koshi Excellence Awards API",
+  });
+});
+
+// Used by the load balancer and deployment platform to confirm that the
+// Node process is alive without depending on the database-backed endpoints.
+app.get("/api/health", (req, res) => {
+  return sendSuccess(res, 200, "API is healthy", {
     service: "Koshi Excellence Awards API",
   });
 });
@@ -55,12 +71,13 @@ app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || "0.0.0.0";
 
 const startServer = async () => {
   await connectDB();
 
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`Server running at http://${HOST}:${PORT}`);
   });
 };
 

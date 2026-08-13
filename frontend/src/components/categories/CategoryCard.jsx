@@ -4,13 +4,15 @@ import { createElement } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { getCategoryIcon } from "../../lib/categoryIcons";
+import { getCategorySlug } from "../../lib/api";
 
 export default function CategoryCard({ category, hideDescription = false }) {
   const icon = getCategoryIcon(category.category_name);
+  const slug = getCategorySlug(category);
 
   return (
     <Link
-      to={`/categories/${category.slug}`}
+      to={`/categories/${slug}`}
       className="
         group
         rounded-2xl

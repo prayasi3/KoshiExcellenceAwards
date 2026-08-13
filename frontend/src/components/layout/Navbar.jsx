@@ -104,9 +104,9 @@ export default function Navbar() {
                       <CalendarRange size={13} aria-hidden="true" />
                       By edition
                     </span>
-                    {editions.map((edition) => (
+                    {editions.map((edition, index) => (
                       <Link
-                        key={edition.id}
+                        key={`desktop-edition-${edition.id ?? edition.year ?? "item"}-${index}`}
                         to={item.buildEditionLink(edition)}
                         className="nav-dropdown__link"
                       >
@@ -168,9 +168,9 @@ export default function Navbar() {
 
                 {item.buildEditionLink && editions.length > 0 && expandedMobile === item.name && (
                   <div className="mobile-submenu">
-                    {editions.map((edition) => (
+                    {editions.map((edition, index) => (
                       <Link
-                        key={edition.id}
+                        key={`mobile-edition-${edition.id ?? edition.year ?? "item"}-${index}`}
                         to={item.buildEditionLink(edition)}
                         className="mobile-submenu__link"
                         onClick={() => setMobileOpen(false)}

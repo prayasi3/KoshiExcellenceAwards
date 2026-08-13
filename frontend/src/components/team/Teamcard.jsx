@@ -1,6 +1,7 @@
 // src/components/teams/TeamCard.jsx
 
 import { User } from "lucide-react";
+import FacebookMedia from "../common/FacebookMedia";
 
 const roleLabels = {
   chief_advisor: "Chief Advisor",
@@ -19,10 +20,15 @@ export default function TeamCard({ member }) {
 
       <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
         {member.photo_url ? (
-          <img
+          <FacebookMedia
             src={member.photo_url}
             alt={member.full_name}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            placeholder={
+              <div className="flex h-full items-center justify-center bg-slate-100">
+                <User className="h-20 w-20 text-slate-300" />
+              </div>
+            }
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-slate-100">

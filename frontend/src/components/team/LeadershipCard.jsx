@@ -1,6 +1,7 @@
 // src/components/team/LeadershipCard.jsx
 
 import { User } from "lucide-react";
+import FacebookMedia from "../common/FacebookMedia";
 
 const roleLabels = {
   chairman: "Chairman",
@@ -16,10 +17,15 @@ export default function LeadershipCard({ member, accentColor }) {
     >
       <div className="h-20 w-20 overflow-hidden rounded-full bg-slate-100">
         {member.photo_url ? (
-          <img
+          <FacebookMedia
             src={member.photo_url}
             alt={member.full_name}
             className="h-full w-full object-cover"
+            placeholder={
+              <div className="flex h-full w-full items-center justify-center bg-slate-100">
+                <User className="h-9 w-9 text-slate-300" />
+              </div>
+            }
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-slate-100">

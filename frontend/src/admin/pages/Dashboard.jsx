@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const EMPTY_STATS = {
+  editions: 0,
+  categories: 0,
+  recipients: 0,
+  honorees: 0,
+  speakers: 0,
+  sponsors: 0,
+  team: 0,
+  gallery: 0,
+};
+
 export default function Dashboard() {
-  const [stats, setStats] = useState({
-    editions: 0,
-    categories: 0,
-    recipients: 0,
-    honorees: 0,
-    speakers: 0,
-    sponsors: 0,
-    team: 0,
-    gallery: 0,
-  });
+  const [stats, setStats] = useState(EMPTY_STATS);
 
   useEffect(() => {
     fetchDashboard();
@@ -21,8 +23,9 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
+      const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
       const res = await axios.get(
-        "http://localhost:5000/api/admin/dashboard",
+        `${API_BASE}/admin/dashboard`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -30,7 +33,9 @@ export default function Dashboard() {
         }
       );
 
-      setStats(res.data.stats);
+      // The API success envelope is { success, message, data: { stats } }.
+      // Keep the expected object shape even if a malformed response is returned.
+      setStats({ ...EMPTY_STATS, ...(res.data?.data?.stats || {}) });
     } catch (err) {
       console.error(err);
     }

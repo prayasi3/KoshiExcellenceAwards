@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import HonoreeDetails from "./HonoreeDetails";
+import FacebookMedia from "../common/FacebookMedia";
 
 function getInitials(name = "") {
   const words = name.trim().split(/\s+/).filter(Boolean);
@@ -16,11 +17,18 @@ export default function HonoreeCard({ honoree }) {
     <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="aspect-[4/5] overflow-hidden bg-[#0B1F3A]">
         {showImage ? (
-          <img
+          <FacebookMedia
             src={honoree.image_url}
             alt={honoree.name}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
             onError={() => setImageFailed(true)}
+            placeholder={
+              <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#0B1F3A] to-[#162D50]">
+                <span className="font-heading text-5xl font-bold text-[#C9A84C]">
+                  {getInitials(honoree.name)}
+                </span>
+              </div>
+            }
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#0B1F3A] to-[#162D50]">

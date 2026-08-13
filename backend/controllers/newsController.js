@@ -1,13 +1,11 @@
 import * as newsService from "../services/newsService.js";
+import { sendSuccess } from "../utils/apiResponse.js";
 
 export const getNews = async (req, res) => {
   try {
     const news = await newsService.getAllNews();
 
-    res.json({
-      success: true,
-      data: news,
-    });
+    return sendSuccess(res, 200, "Fetched successfully", news);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -27,10 +25,7 @@ export const getNewsById = async (req, res) => {
       });
     }
 
-    res.json({
-      success: true,
-      data: news,
-    });
+    return sendSuccess(res, 200, "Fetched successfully", news);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -43,10 +38,7 @@ export const createNews = async (req, res) => {
   try {
     const news = await newsService.createNews(req.body);
 
-    res.status(201).json({
-      success: true,
-      data: news,
-    });
+    return sendSuccess(res, 201, "Created successfully", news);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -69,10 +61,7 @@ export const updateNews = async (req, res) => {
       });
     }
 
-    res.json({
-      success: true,
-      data: news,
-    });
+    return sendSuccess(res, 200, "Updated successfully", news);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -92,10 +81,7 @@ export const deleteNews = async (req, res) => {
       });
     }
 
-    res.json({
-      success: true,
-      message: "News deleted successfully",
-    });
+    return sendSuccess(res, 200, "News deleted successfully", null);
   } catch (error) {
     res.status(500).json({
       success: false,

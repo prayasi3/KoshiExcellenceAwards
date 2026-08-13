@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import Card from "../components/Card";
+import FacebookMedia from "../../components/common/FacebookMedia";
 import PageHeader from "../components/PageHeader";
 import Button from "../components/Button";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -272,10 +273,16 @@ export default function News() {
 
                     <td className="p-4">
                       {item.featured_image ? (
-                        <img
+                        <FacebookMedia
                           src={item.featured_image}
                           alt={item.title}
                           className="w-20 h-14 rounded object-cover"
+                          onError={() => {}}
+                          placeholder={
+                            <div className="flex h-14 w-20 items-center justify-center rounded bg-slate-100 text-sm text-slate-500">
+                              -
+                            </div>
+                          }
                         />
                       ) : (
                         "-"

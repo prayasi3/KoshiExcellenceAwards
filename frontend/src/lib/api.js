@@ -4,6 +4,25 @@
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
+/**
+ * Creates the URL-safe category identifier used by the public category pages.
+ * Older category rows may not have a stored slug, so the category name is a
+ * reliable fallback until those records are updated in the admin panel.
+ */
+export function toSlug(value) {
+  return String(value || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function getCategorySlug(category) {
+  return toSlug(category?.slug) || toSlug(category?.category_name);
+}
+
 /** Normalises the various shapes the backend returns list data in. */
 export function extractItems(payload) {
   if (Array.isArray(payload)) return payload;

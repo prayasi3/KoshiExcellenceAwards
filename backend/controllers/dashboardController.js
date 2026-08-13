@@ -8,6 +8,7 @@ import { Team } from "../models/Team.js";
 import { Contact } from "../models/Contact.js";
 import { News } from "../models/News.js";
 import { Speaker } from "../models/Speaker.js";
+import { sendSuccess } from "../utils/apiResponse.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
@@ -35,8 +36,7 @@ export const getDashboardStats = async (req, res) => {
       Contact.count(),
     ]);
 
-    res.status(200).json({
-      success: true,
+    return sendSuccess(res, 200, "Fetched successfully", {
       stats: {
         editions,
         categories,
