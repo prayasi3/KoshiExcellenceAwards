@@ -6,6 +6,7 @@ import {
   FaLinkedinIn,
 } from "react-icons/fa";
 import Container from "./Container";
+import trophy from "../../assets/trophy-transparent.svg";
 
 export default function Footer() {
   return (
@@ -16,9 +17,7 @@ export default function Footer() {
           {/* About */}
 
           <div>
-            <h3 className="text-2xl font-bold">
-              <span className="text-[#C9A84C]">Koshi</span> Excellence
-            </h3>
+            <img src={trophy} alt="Koshi Excellence Award Trophy" className="h-14 w-auto" />
 
             <p className="mt-5 text-gray-300 leading-7">
               Recognising extraordinary individuals and organizations
@@ -97,22 +96,22 @@ export default function Footer() {
 
             <div className="flex gap-4">
 
-              <a
-                href="#"
+              
+                <a href="#"
                 className="rounded-full border border-white/20 p-3 hover:bg-[#C9A84C] hover:text-[#0B1F3A] transition"
               >
                 <FaFacebookF size={18} />
               </a>
 
-              <a
-                href="#"
+              
+                <a href="#"
                 className="rounded-full border border-white/20 p-3 hover:bg-[#C9A84C] hover:text-[#0B1F3A] transition"
               >
                 <FaInstagram size={18} />
               </a>
 
-              <a
-                href="#"
+              
+                <a href="#"
                 className="rounded-full border border-white/20 p-3 hover:bg-[#C9A84C] hover:text-[#0B1F3A] transition"
               >
                 <FaLinkedinIn size={18} />
