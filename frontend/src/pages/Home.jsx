@@ -186,7 +186,7 @@ export default function Home() {
     { value: "5", label: "Hours of Event" },
     { value: "15+", label: "Speakers" },
     { value: "75+", label: "Digital & Print" },
-    { value: "5M+", label: "Social Media Reached" },
+    { value: "5M+", label: "Social Reach" },
   ];
 
   return (
@@ -214,13 +214,13 @@ export default function Home() {
 
       {/* ── Stats strip (overlaps the hero, like the reference design) ── */}
       <section className="relative z-10 mx-auto -mt-16 w-full max-w-6xl px-5 md:px-10">
-        <Reveal className="flex flex-wrap justify-center divide-y divide-slate-100 rounded-3xl bg-white px-6 py-9 shadow-xl sm:px-10 lg:flex-nowrap lg:divide-x lg:divide-y-0">
+        <Reveal className="grid grid-cols-2 overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-xl sm:grid-cols-3 lg:grid-cols-7">
           {stats.map((stat) => (
-            <div key={stat.label} className="min-w-[130px] flex-1 px-5 py-4 text-center lg:py-0">
+            <div key={stat.label} className="border-b border-r border-slate-100 px-4 py-6 text-center last:border-r-0 sm:px-5 lg:border-b-0 lg:py-8">
               <p className="font-sans text-3xl font-extrabold tracking-tight text-[#0B1F3A] sm:text-4xl">
                 {stat.value}
                </p>
-              <p className="mt-2 whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
                 {stat.label}
               </p>
             </div>
@@ -229,7 +229,7 @@ export default function Home() {
       </section>
 
       {/* ── About ── */}
-      <section className="bg-white py-20 sm:py-24">
+      <section className="bg-gradient-to-b from-[#F8F4E7] via-white to-white pb-20 pt-0 sm:pb-24">
         <div className="mx-auto grid max-w-7xl gap-14 px-5 md:px-10 lg:grid-cols-2 lg:items-center">
           <Reveal>
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
@@ -276,7 +276,7 @@ export default function Home() {
       </section>
 
       {/* ── Award Categories ── */}
-      <section className="bg-[#0B1F3A] py-20 text-white sm:py-24">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#0B1F3A] via-[#0B1F3A] to-[#162D50] py-20 text-white sm:py-24">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
           <Reveal className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
@@ -318,7 +318,7 @@ export default function Home() {
       </section>
 
       {/* ── Event Details ── */}
-      <section className="bg-white py-20 sm:py-24">
+      <section className="bg-gradient-to-b from-[#F7F8FA] to-white py-20 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 md:px-10">
           <Reveal className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
@@ -379,7 +379,7 @@ export default function Home() {
       </section>
 
       {/* ── Sponsors ── */}
-      <section className="bg-[#F2F4F7] py-20 sm:py-24">
+      <section className="bg-gradient-to-b from-[#F2F4F7] to-[#F8F4E7] py-20 sm:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-10">
           <Reveal className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">
