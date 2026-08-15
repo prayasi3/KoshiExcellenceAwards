@@ -33,7 +33,33 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // middleware
-app.use(cors());
+const allowedOrigins = new Set(
+  [
+    process.env.FRONTEND_URL,
+    process.env.CORS_ORIGINS,
+    // Allows the local Vite admin panel to manage the production API.
+    "http://localhost:5173",
+  ]
+    .filter(Boolean)
+    .flatMap((origins) => origins.split(","))
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Requests without an Origin header, such as health checks and server-to-server calls.
+      if (!origin || allowedOrigins.has(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`Origin not allowed by CORS: ${origin}`));
+    },
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
