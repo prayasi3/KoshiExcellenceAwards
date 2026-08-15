@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { Menu, X, ChevronDown, CalendarRange } from "lucide-react";
 import "./Navbar.css";
@@ -56,7 +56,36 @@ function editionLabel(edition) {
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandedMobile, setExpandedMobile] = useState(null);
+  const [hidden, setHidden] = useState(false);
+  const lastScrollY = useRef(0);
   const { editions } = useEditions();
+
+  useEffect(() => {
+    lastScrollY.current = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Never hide the navbar while the mobile menu is open, and never
+      // hide it near the very top of the page.
+      if (mobileOpen || currentScrollY < 80) {
+        setHidden(false);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      const scrollingDown = currentScrollY > lastScrollY.current;
+
+      // Small threshold so tiny scroll jitters don't toggle the navbar.
+      if (Math.abs(currentScrollY - lastScrollY.current) > 6) {
+        setHidden(scrollingDown);
+        lastScrollY.current = currentScrollY;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mobileOpen]);
 
   const toggleMobileMenu = () => {
     setMobileOpen((current) => {
@@ -68,7 +97,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="navbar">
+      <header className={`navbar ${hidden ? "navbar--hidden" : ""}`}>
         <div className="navbar-container">
           {/* Logo */}
           <NavLink to="/" className="logo">
