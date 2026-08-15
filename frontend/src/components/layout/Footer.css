@@ -6,3 +6,42 @@
   margin-top: 40px;
   border-top: 2px solid var(--secondary);
 }
+
+/* ========================= Footer links (Quick Links, bottom bar) ========================= */
+
+.footer-link {
+  position: relative;
+  display: inline-flex;
+  color: #D1D5DB;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  background: #C9A84C;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.footer-link:hover {
+  color: #C9A84C;
+}
+
+.footer-link:hover::after {
+  transform: scaleX(1);
+}
+
+.footer-link.active {
+  color: #C9A84C;
+}
+
+.footer-link.active::after {
+  transform: scaleX(1);
+}

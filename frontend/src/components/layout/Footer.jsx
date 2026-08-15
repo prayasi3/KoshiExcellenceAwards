@@ -7,6 +7,7 @@ import {
 } from "react-icons/fa";
 import Container from "./Container";
 import trophy from "../../assets/trophy-transparent.svg";
+import "./Footer.css";
 
 export default function Footer() {
   return (
@@ -33,31 +34,43 @@ export default function Footer() {
               Quick Links
             </h4>
 
-            <div className="flex flex-col gap-3">
-              <NavLink to="/" className="hover:text-[#C9A84C]">
-                Home
-              </NavLink>
+            <ul className="flex flex-col gap-3">
+              <li>
+                <NavLink to="/" className="footer-link">
+                  Home
+                </NavLink>
+              </li>
 
-              <NavLink to="/about" className="hover:text-[#C9A84C]">
-                About
-              </NavLink>
+              <li>
+                <NavLink to="/about" className="footer-link">
+                  About
+                </NavLink>
+              </li>
 
-              <NavLink to="/recipients" className="hover:text-[#C9A84C]">
-                Recipients
-              </NavLink>
+              <li>
+                <NavLink to="/recipients" className="footer-link">
+                  Recipients
+                </NavLink>
+              </li>
 
-              <NavLink to="/honorees" className="hover:text-[#C9A84C]">
-                Honorees
-              </NavLink>
+              <li>
+                <NavLink to="/honorees" className="footer-link">
+                  Honorees
+                </NavLink>
+              </li>
 
-              <NavLink to="/gallery" className="hover:text-[#C9A84C]">
-                Gallery
-              </NavLink>
+              <li>
+                <NavLink to="/gallery" className="footer-link">
+                  Gallery
+                </NavLink>
+              </li>
 
-              <NavLink to="/contact" className="hover:text-[#C9A84C]">
-                Contact
-              </NavLink>
-            </div>
+              <li>
+                <NavLink to="/contact" className="footer-link">
+                  Contact
+                </NavLink>
+              </li>
+            </ul>
           </div>
 
           {/* Contact */}
@@ -104,14 +117,14 @@ export default function Footer() {
               </a>
 
               
-                <a href="#"
+              < a href="#"
                 className="rounded-full border border-white/20 p-3 hover:bg-[#C9A84C] hover:text-[#0B1F3A] transition"
               >
                 <FaInstagram size={18} />
               </a>
 
               
-                <a href="#"
+              <a href="#"
                 className="rounded-full border border-white/20 p-3 hover:bg-[#C9A84C] hover:text-[#0B1F3A] transition"
               >
                 <FaLinkedinIn size={18} />
@@ -138,11 +151,11 @@ export default function Footer() {
             </p>
 
             <div className="flex gap-6">
-              <NavLink to="/privacy" className="hover:text-[#C9A84C]">
+              <NavLink to="/privacy" className="footer-link">
                 Privacy Policy
               </NavLink>
 
-              <NavLink to="/terms" className="hover:text-[#C9A84C]">
+              <NavLink to="/terms" className="footer-link">
                 Terms of Use
               </NavLink>
             </div>

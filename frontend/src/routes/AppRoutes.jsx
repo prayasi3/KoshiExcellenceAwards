@@ -13,6 +13,8 @@ import PublicNews from "../pages/News";
 import PublicTeams from "../pages/Teams"
 import PublicContact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
+import Privacy from "../pages/Privacy";
+import Terms from "../pages/Terms";
 
 
 // Admin
@@ -38,6 +40,23 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* Public Website */}
+      <Route
+        path="/privacy"
+        element={
+          <MainLayout>
+            <Privacy />
+          </MainLayout>
+      }
+/>
+
+    <Route
+      path="/terms"
+      element={
+        <MainLayout>
+          <Terms />
+        </MainLayout>
+      }
+    />
       <Route
         path="/"
         element={
