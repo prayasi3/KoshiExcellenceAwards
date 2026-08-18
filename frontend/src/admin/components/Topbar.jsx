@@ -1,7 +1,7 @@
-import { Bell, UserCircle } from "lucide-react";
+import { Bell, UserCircle, Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
-export default function Topbar() {
+export default function Topbar({ onMenuClick = () => {} }) {
   const location = useLocation();
 
   const pageTitles = {
@@ -27,21 +27,32 @@ export default function Topbar() {
     };
 
   return (
-    <header className="bg-white border-b h-20 flex items-center justify-between px-8">
+    <header className="bg-white border-b h-20 flex items-center justify-between px-4 sm:px-8">
 
-      <div>
+      <div className="flex items-center gap-3 min-w-0">
 
-        <h1 className="text-2xl font-bold text-[#0B1F3A]">
-          {title}
-        </h1>
+        {/* Hamburger — mobile only, opens the sidebar drawer */}
+        <button
+          onClick={onMenuClick}
+          aria-label="Open menu"
+          className="rounded-lg p-2 text-[#0B1F3A] hover:bg-gray-100 md:hidden"
+        >
+          <Menu size={24} />
+        </button>
 
-        <p className="text-gray-500 text-sm">
-          Admin Dashboard
-        </p>
+        <div className="min-w-0">
+          <h1 className="truncate text-xl font-bold text-[#0B1F3A] sm:text-2xl">
+            {title}
+          </h1>
+
+          <p className="hidden text-sm text-gray-500 sm:block">
+            Admin Dashboard
+          </p>
+        </div>
 
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-3 sm:gap-6">
 
         <button className="relative hover:text-[#C9A84C] transition">
 
@@ -58,7 +69,7 @@ export default function Topbar() {
             className="text-[#0B1F3A]"
           />
 
-          <div>
+          <div className="hidden sm:block">
 
             <p className="font-semibold">
               {user.full_name}

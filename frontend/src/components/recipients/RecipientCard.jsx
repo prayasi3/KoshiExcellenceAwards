@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import RecipientDetails from "./RecipientDetails";
 import FacebookMedia from "../common/FacebookMedia";
+import { getRecipientSlug } from "../../lib/api";
 
 function getInitials(name = "") {
   const words = name.trim().split(/\s+/).filter(Boolean);
@@ -13,10 +15,10 @@ function getInitials(name = "") {
     .join("");
 }
 
-export default function RecipientCard({ recipient, categoryName }) {
+export default function RecipientCard({ recipient, categoryName, disableLink = false }) {
   const [imageFailed, setImageFailed] = useState(false);
 
-  return (
+  const cardBody = (
     <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="aspect-[4/5] overflow-hidden bg-[#0B1F3A]">
         {recipient.photo_url && !imageFailed ? (
@@ -44,5 +46,13 @@ export default function RecipientCard({ recipient, categoryName }) {
 
       <RecipientDetails recipient={recipient} categoryName={categoryName} />
     </article>
+  );
+
+  if (disableLink) return cardBody;
+
+  return (
+    <Link to={`/recipients/${getRecipientSlug(recipient)}`} className="block">
+      {cardBody}
+    </Link>
   );
 }

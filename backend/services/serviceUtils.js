@@ -1,7 +1,47 @@
 import { AppError } from "../utils/AppError.js";
 import { Edition } from "../models/Edition.js";
+import { Op } from "sequelize";
 
 export const hasBlankValue = (value) => String(value ?? "").trim() === "";
+
+/** Turns any string into a lowercase, hyphenated, URL-safe slug. */
+export const slugify = (value) =>
+  String(value ?? "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+/**
+ * Generates a unique slug for `model` based on `sourceText`, appending
+ * `-2`, `-3`, etc. if the base slug is already taken. `excludeId` skips the
+ * record currently being updated so it doesn't collide with itself.
+ */
+export const generateUniqueSlug = async (model, sourceText, excludeId) => {
+  const base = slugify(sourceText) || "item";
+  let candidate = base;
+  let suffix = 2;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const where = { slug: candidate };
+
+    if (excludeId) {
+      where.id = { [Op.ne]: excludeId };
+    }
+
+    const existing = await model.findOne({ where });
+
+    if (!existing) {
+      return candidate;
+    }
+
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+};
 
 export const pickFields = (body, fields) => {
   const payload = {};

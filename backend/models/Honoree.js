@@ -30,6 +30,11 @@ export const Honoree = db.define(
       allowNull: true,
     },
 
+    address: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+
     slug: {
       type: DataTypes.STRING(255),
       allowNull: true,

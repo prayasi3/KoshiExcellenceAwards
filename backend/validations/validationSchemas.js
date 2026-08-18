@@ -152,6 +152,8 @@ const honoreeBaseSchema = z.object({
   edition_id: optionalPositiveInt,
   name: requiredString("Name"),
   title: optionalString(),
+  slug: optionalString(),
+  address: optionalString(255),
   description: optionalString(5000),
   image_url: optionalString(500),
 });
@@ -170,6 +172,7 @@ const recipientBaseSchema = z.object({
   category_id: requiredPositiveInt("Category ID"),
   full_name: requiredString("Full name"),
   title: optionalString(),
+  address: optionalString(255),
   slug: optionalString(),
   bio: optionalString(5000),
   photo_url: optionalString(500),

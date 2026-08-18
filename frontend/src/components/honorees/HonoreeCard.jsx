@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import HonoreeDetails from "./HonoreeDetails";
 import FacebookMedia from "../common/FacebookMedia";
+import { getHonoreeSlug } from "../../lib/api";
 
 function getInitials(name = "") {
   const words = name.trim().split(/\s+/).filter(Boolean);
@@ -9,11 +11,11 @@ function getInitials(name = "") {
   return words.slice(0, 2).map((word) => word[0].toUpperCase()).join("");
 }
 
-export default function HonoreeCard({ honoree }) {
+export default function HonoreeCard({ honoree, disableLink = false }) {
   const [imageFailed, setImageFailed] = useState(false);
   const showImage = Boolean(honoree.image_url) && !imageFailed;
 
-  return (
+  const cardBody = (
     <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="aspect-[4/5] overflow-hidden bg-[#0B1F3A]">
         {showImage ? (
@@ -41,5 +43,13 @@ export default function HonoreeCard({ honoree }) {
 
       <HonoreeDetails honoree={honoree} />
     </article>
+  );
+
+  if (disableLink) return cardBody;
+
+  return (
+    <Link to={`/honorees/${getHonoreeSlug(honoree)}`} className="block">
+      {cardBody}
+    </Link>
   );
 }

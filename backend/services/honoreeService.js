@@ -1,6 +1,7 @@
 import { Honoree } from "../models/Honoree.js";
 import {
   findPaginated,
+  generateUniqueSlug,
   getEditionInclude,
   hasBlankValue,
   pickFields,
@@ -12,6 +13,7 @@ const honoreeFields = [
   "edition_id",
   "name",
   "subtitle",
+  "address",
   "slug",
   "recognition",
   "description",
@@ -34,6 +36,12 @@ export const getHonoree = async (id) =>
 export const createHonoreeRecord = async (body) => {
   const payload = pickFields(body, honoreeFields);
   requireValue(payload.name, "Name is required");
+
+  payload.slug = await generateUniqueSlug(
+    Honoree,
+    hasBlankValue(payload.slug) ? payload.name : payload.slug
+  );
+
   return Honoree.create(payload);
 };
 
@@ -43,6 +51,14 @@ export const updateHonoreeRecord = async (id, body) => {
 
   if (payload.name !== undefined && hasBlankValue(payload.name)) {
     requireValue(payload.name, "Name is required");
+  }
+
+  if (payload.slug !== undefined || payload.name !== undefined) {
+    const sourceText = hasBlankValue(payload.slug)
+      ? payload.name ?? honoree.name
+      : payload.slug;
+
+    payload.slug = await generateUniqueSlug(Honoree, sourceText, id);
   }
 
   await honoree.update(payload);

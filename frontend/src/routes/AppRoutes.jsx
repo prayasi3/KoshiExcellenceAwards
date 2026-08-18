@@ -15,6 +15,8 @@ import PublicContact from "../pages/Contact";
 import NotFound from "../pages/NotFound";
 import Privacy from "../pages/Privacy";
 import Terms from "../pages/Terms";
+import RecipientDetail from "../pages/RecipientDetail";
+import HonoreeDetail from "../pages/HonoreeDetail";
 
 
 // Admin
@@ -93,6 +95,15 @@ export default function AppRoutes() {
         }
       />
 
+      <Route
+        path="/honorees/:slug"
+        element={
+          <MainLayout>
+            <HonoreeDetail />
+          </MainLayout>
+        }
+      />
+
         <Route
         path="/teams"
         element={
@@ -120,6 +131,15 @@ export default function AppRoutes() {
           </MainLayout>
         }
       /> 
+
+      <Route
+        path="/recipients/:slug"
+        element={
+          <MainLayout>
+            <RecipientDetail />
+          </MainLayout>
+        }
+      />
 
       <Route path="/sponsors" element={<MainLayout><PublicSponsors /></MainLayout>} />
       <Route path="/gallery" element={<MainLayout><PublicGallery /></MainLayout>} />

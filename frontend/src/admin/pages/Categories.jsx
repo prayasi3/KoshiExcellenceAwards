@@ -10,7 +10,10 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import EmptyState from "../components/EmptyState";
 import StatusBadge from "../components/StatusBadge";
 import FormInput from "../components/FormInput";
-import FormTextarea from "../components/FormTextarea"; //
+import FormTextarea from "../components/FormTextarea";
+
+import FormRichText from "../components/FormRichText";
+import { stripHtml } from "../utils/adminText";
 
 import {
   getCategories,
@@ -49,19 +52,21 @@ export default function Categories() {
   // =======================
 
   const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(categorySchema),
+  register,
+  handleSubmit,
+  reset,
+  setValue,
+  watch,
+  formState: { errors },
+} = useForm({
+  resolver: zodResolver(categorySchema),
 
-    defaultValues: {
-      category_name: "",
-      description: "",
-      is_active: true,
-    },
-  });
+  defaultValues: {
+    category_name: "",
+    description: "",
+    is_active: true,
+  },
+});
 
   // =======================
   // Fetch Categories
@@ -273,6 +278,10 @@ export default function Categories() {
                                             {category.description || "-"}
                                         </td>
 
+                                        <td className="p-4 text-gray-600">
+                                          {stripHtml(category.description) || "-"}
+                                      </td>
+
                                         <td className="p-4">
 
                                             <StatusBadge
@@ -355,14 +364,15 @@ export default function Categories() {
 
                   {/* Description */}
 
-                  <FormTextarea
+                  <FormRichText
                     label="Description"
-                    placeholder="Enter description"
-                    rows={4}
-                    {...register("description")}
+                    value={watch("description")}
+                    onChange={(html) =>
+                      setValue("description", html, { shouldDirty: true, shouldValidate: true })
+                    }
                     error={errors.description?.message}
+                    placeholder="Enter description"
                   />
-
                   {/* Active */}
 
                   <div className="mb-6">

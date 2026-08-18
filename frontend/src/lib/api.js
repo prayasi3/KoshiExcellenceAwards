@@ -23,6 +23,14 @@ export function getCategorySlug(category) {
   return toSlug(category?.slug) || toSlug(category?.category_name);
 }
 
+export function getRecipientSlug(recipient) {
+  return toSlug(recipient?.slug) || toSlug(recipient?.full_name);
+}
+
+export function getHonoreeSlug(honoree) {
+  return toSlug(honoree?.slug) || toSlug(honoree?.name);
+}
+
 /** Normalises the various shapes the backend returns list data in. */
 export function extractItems(payload) {
   if (Array.isArray(payload)) return payload;

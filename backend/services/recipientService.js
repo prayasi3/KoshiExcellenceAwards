@@ -1,6 +1,7 @@
 import { Recipient } from "../models/Recipient.js";
 import {
   findPaginated,
+  generateUniqueSlug,
   getEditionInclude,
   hasBlankValue,
   pickFields,
@@ -14,6 +15,8 @@ const recipientFields = [
   "category_id",
   "full_name",
   "title",
+  "slug",
+  "address",
   "bio",
   "photo_url",
 ];
@@ -37,6 +40,11 @@ export const createRecipientRecord = async (body) => {
   requirePresent(payload.category_id, "Category ID is required");
   requireValue(payload.full_name, "Full name is required");
 
+  payload.slug = await generateUniqueSlug(
+    Recipient,
+    hasBlankValue(payload.slug) ? payload.full_name : payload.slug
+  );
+
   return Recipient.create(payload);
 };
 
@@ -57,6 +65,14 @@ export const updateRecipientRecord = async (id, body) => {
 
   if (payload.full_name !== undefined && hasBlankValue(payload.full_name)) {
     requireValue(payload.full_name, "Full name is required");
+  }
+
+  if (payload.slug !== undefined || payload.full_name !== undefined) {
+    const sourceText = hasBlankValue(payload.slug)
+      ? payload.full_name ?? recipient.full_name
+      : payload.slug;
+
+    payload.slug = await generateUniqueSlug(Recipient, sourceText, id);
   }
 
   await recipient.update(payload);

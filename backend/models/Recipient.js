@@ -40,6 +40,17 @@ export const Recipient = db.define(
       allowNull: true,
     },
 
+    slug: {
+      type: DataTypes.STRING(255),
+      unique: true,
+      allowNull: true,
+    },
+
+    address: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+
     bio: {
       type: DataTypes.TEXT,
       allowNull: true,
