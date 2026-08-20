@@ -69,16 +69,6 @@ export default function RecipientDetail() {
 
   return (
     <>
-      <PageBanner
-        title={recipient?.full_name || "Recipient"}
-        subtitle={editionLabel}
-        breadcrumbs={[
-          { label: "Home", path: "/" },
-          { label: "Awarded", path: "/recipients" },
-          { label: recipient?.full_name || "Recipient" },
-        ]}
-      />
-
       <Section className="bg-white">
         {loading ? (
           <div className="flex min-h-60 flex-col items-center justify-center gap-4 text-slate-600" role="status">

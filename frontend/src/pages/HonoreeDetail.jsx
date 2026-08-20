@@ -56,16 +56,6 @@ export default function HonoreeDetail() {
 
   return (
     <>
-      <PageBanner
-        title={honoree?.name || "Honoree"}
-        subtitle={editionLabel}
-        breadcrumbs={[
-          { label: "Home", path: "/" },
-          { label: "Honorees", path: "/honorees" },
-          { label: honoree?.name || "Honoree" },
-        ]}
-      />
-
       <Section className="bg-white">
         {loading ? (
           <div className="flex min-h-60 flex-col items-center justify-center gap-4 text-slate-600" role="status">

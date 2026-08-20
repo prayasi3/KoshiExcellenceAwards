@@ -5,6 +5,9 @@ import { z } from "zod";
 import { getEditions, getEditionCategories } from "../services/editionService";
 import { getCategories } from "../services/categoryService";
 import FacebookMedia from "../../components/common/FacebookMedia";
+import FormRichText from "../components/FormRichText";
+import FormInput from "../components/FormInput";
+import FormSelect from "../components/FormSelect";
 
 import {
   getRecipients,
@@ -12,6 +15,7 @@ import {
   updateRecipient,
   deleteRecipient,
 } from "../services/recipientService";
+
 // =======================
 // Zod Schema
 // =======================
@@ -41,6 +45,18 @@ export const recipientSchema = z.object({
     .optional()
     .or(z.literal("")),
 
+  address: z
+    .string()
+    .max(255)
+    .optional()
+    .or(z.literal("")),
+
+  slug: z
+    .string()
+    .max(255)
+    .optional()
+    .or(z.literal("")),
+
   bio: z
     .string()
     .optional()
@@ -53,6 +69,17 @@ export const recipientSchema = z.object({
     .or(z.literal("")),
 });
 
+const emptyValues = {
+  edition_id: "",
+  category_id: "",
+  full_name: "",
+  title: "",
+  address: "",
+  slug: "",
+  bio: "",
+  photo_url: "",
+};
+
 export default function Recipients() {
   // =======================
   // State
@@ -63,6 +90,7 @@ export default function Recipients() {
   const [categories, setCategories] = useState([]);
   const [editionCategories, setEditionCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [showModal, setShowModal] = useState(false);
   const [editingRecipient, setEditingRecipient] = useState(null);
@@ -76,19 +104,26 @@ export default function Recipients() {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(recipientSchema),
-
-    defaultValues: {
-      edition_id: "",
-      category_id: "",
-      full_name: "",
-      title: "",
-      bio: "",
-      photo_url: "",
-    },
+    defaultValues: emptyValues,
   });
+
+  // =======================
+  // Lookup helpers (id -> readable name)
+  // =======================
+
+  const editionLabel = (editionId) => {
+    const edition = editions.find((item) => Number(item.id) === Number(editionId));
+    return edition ? `${edition.title} (${edition.year})` : `#${editionId}`;
+  };
+
+  const categoryLabel = (categoryId) => {
+    const category = categories.find((item) => Number(item.id) === Number(categoryId));
+    return category ? category.category_name : `#${categoryId}`;
+  };
 
   // =======================
   // Fetch Recipients
@@ -97,9 +132,7 @@ export default function Recipients() {
   const fetchRecipients = async () => {
     try {
       setLoading(true);
-
       const data = await getRecipients();
-
       setRecipients(data);
     } catch (err) {
       console.error(err);
@@ -110,13 +143,13 @@ export default function Recipients() {
   };
 
   const fetchEditions = async () => {
-  try {
-    const data = await getEditions();
-    setEditions(data);
-  } catch (err) {
-    console.error(err);
-  }
-};
+    try {
+      const data = await getEditions();
+      setEditions(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const loadEditionCategories = async (editionId) => {
     if (!editionId) {
@@ -130,8 +163,10 @@ export default function Recipients() {
   useEffect(() => {
     fetchRecipients();
     fetchEditions();
-    getCategories().then(setCategories).catch((err) => console.error("Failed to load categories", err));
-}, []);
+    getCategories()
+      .then(setCategories)
+      .catch((err) => console.error("Failed to load categories", err));
+  }, []);
 
   // =======================
   // Open Add Modal
@@ -140,16 +175,7 @@ export default function Recipients() {
   const handleAdd = () => {
     setEditingRecipient(null);
     setEditionCategories([]);
-
-    reset({
-      edition_id: "",
-      category_id: "",
-      full_name: "",
-      title: "",
-      bio: "",
-      photo_url: "",
-    });
-
+    reset(emptyValues);
     setShowModal(true);
   };
 
@@ -164,7 +190,9 @@ export default function Recipients() {
       edition_id: recipient.edition_id,
       category_id: recipient.category_id,
       full_name: recipient.full_name,
-      title: recipient.title,
+      title: recipient.title || "",
+      address: recipient.address || "",
+      slug: recipient.slug || "",
       bio: recipient.bio || "",
       photo_url: recipient.photo_url || "",
     });
@@ -179,6 +207,14 @@ export default function Recipients() {
 
     setShowModal(true);
   };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingRecipient(null);
+    setEditionCategories([]);
+    reset(emptyValues);
+  };
+
   const editionField = register("edition_id", { valueAsNumber: true });
 
   // =======================
@@ -189,26 +225,13 @@ export default function Recipients() {
     try {
       if (editingRecipient) {
         await updateRecipient(editingRecipient.id, data);
-
         alert("Recipient updated successfully.");
       } else {
         await createRecipient(data);
-
         alert("Recipient created successfully.");
       }
 
-      reset({
-        edition_id: "",
-        category_id: "",
-        full_name: "",
-        title: "",
-        bio: "",
-        photo_url: "",
-      });
-
-      setEditingRecipient(null);
-      setShowModal(false);
-
+      closeModal();
       fetchRecipients();
     } catch (err) {
       console.error(err);
@@ -229,76 +252,112 @@ export default function Recipients() {
 
     try {
       await deleteRecipient(id);
-
       alert("Recipient deleted successfully.");
-
       fetchRecipients();
     } catch (err) {
       console.error(err);
       alert("Failed to delete recipient.");
     }
   };
+
+  // =======================
+  // Filtering (search box)
+  // =======================
+
+  const visibleRecipients = recipients.filter((recipient) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.trim().toLowerCase();
+    return (
+      recipient.full_name?.toLowerCase().includes(term) ||
+      recipient.title?.toLowerCase().includes(term) ||
+      recipient.address?.toLowerCase().includes(term) ||
+      categoryLabel(recipient.category_id).toLowerCase().includes(term)
+    );
+  });
+
   // =======================
   // JSX starts here
   // =======================
 
   return (
-  <div className="p-6">
-    {/* Header */}
+    <div className="p-6">
+      {/* Header */}
 
-    <div className="flex justify-between items-center mb-6">
-      <h1 className="text-3xl font-bold">Recipients</h1>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-[#0B1F3A]">Recipients</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            {recipients.length} recipient{recipients.length === 1 ? "" : "s"} total
+          </p>
+        </div>
 
-      <button
-        onClick={handleAdd}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-      >
-        + Add Recipient
-      </button>
-    </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Search by name, title, category..."
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9A84C] sm:w-72"
+          />
 
-    {/* Loading */}
-
-    {loading ? (
-      <div className="text-center py-10 text-lg">
-        Loading recipients...
+          <button
+            onClick={handleAdd}
+            className="whitespace-nowrap rounded-lg bg-[#0B1F3A] px-4 py-2 font-medium text-white transition hover:bg-[#162D50]"
+          >
+            + Add Recipient
+          </button>
+        </div>
       </div>
-    ) : (
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
-        <table className="w-full border-collapse">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border p-3">ID</th>
-              <th className="border p-3">Edition</th>
-              <th className="border p-3">Category</th>
-              <th className="border p-3">Full Name</th>
-              <th className="border p-3">Title</th>
-              <th className="border p-3">Photo</th>
-              <th className="border p-3 text-center">Actions</th>
-            </tr>
-          </thead>
 
-          <tbody>
-            {recipients.length === 0 ? (
+      {/* Loading / Empty / Table */}
+
+      {loading ? (
+        <div className="rounded-lg bg-white py-10 text-center text-lg shadow">
+          Loading recipients...
+        </div>
+      ) : visibleRecipients.length === 0 ? (
+        <div className="rounded-lg bg-white py-14 text-center text-gray-500 shadow">
+          {recipients.length === 0
+            ? "No recipients yet. Click \u201c+ Add Recipient\u201d to create the first one."
+            : "No recipients match your search."}
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-lg bg-white shadow">
+          <table className="w-full border-collapse">
+            <thead className="bg-gray-100">
               <tr>
-                <td
-                  colSpan="7"
-                  className="border p-6 text-center text-gray-500"
-                >
-                  No recipients found.
-                </td>
+                <th className="border p-3 text-left">Photo</th>
+                <th className="border p-3 text-left">Full Name</th>
+                <th className="border p-3 text-left">Edition</th>
+                <th className="border p-3 text-left">Category</th>
+                <th className="border p-3 text-left">Title</th>
+                <th className="border p-3 text-left">Address</th>
+                <th className="border p-3 text-left">Slug</th>
+                <th className="border p-3 text-center">Actions</th>
               </tr>
-            ) : (
-              recipients.map((recipient) => (
+            </thead>
+
+            <tbody>
+              {visibleRecipients.map((recipient) => (
                 <tr key={recipient.id} className="hover:bg-gray-50">
-                  <td className="border p-3">{recipient.id}</td>
-
                   <td className="border p-3">
-                    {recipient.edition_id}
-                  </td>
-
-                  <td className="border p-3">
-                    {recipient.category_id}
+                    {recipient.photo_url ? (
+                      <FacebookMedia
+                        src={recipient.photo_url}
+                        alt={recipient.full_name}
+                        className="h-12 w-12 rounded-full object-cover"
+                        onError={() => {}}
+                        placeholder={
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xs text-slate-400">
+                            N/A
+                          </div>
+                        }
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xs text-slate-400">
+                        N/A
+                      </div>
+                    )}
                   </td>
 
                   <td className="border p-3 font-medium">
@@ -306,242 +365,204 @@ export default function Recipients() {
                   </td>
 
                   <td className="border p-3">
-                    {recipient.title}
+                    {editionLabel(recipient.edition_id)}
                   </td>
 
                   <td className="border p-3">
-                    {recipient.photo_url ? (
-                      <FacebookMedia
-                        src={recipient.photo_url}
-                        alt={recipient.full_name}
-                        className="h-12 w-12 rounded object-cover"
-                        onError={() => {}}
-                        placeholder={
-                          <div className="flex h-12 w-12 items-center justify-center rounded bg-slate-100 text-sm text-slate-500">
-                            -
-                          </div>
-                        }
-                      />
-                    ) : (
-                      "-"
-                    )}
+                    {categoryLabel(recipient.category_id)}
+                  </td>
+
+                  <td className="border p-3">{recipient.title || "-"}</td>
+
+                  <td className="border p-3">{recipient.address || "-"}</td>
+
+                  <td className="border p-3 text-gray-500">
+                    {recipient.slug || "-"}
                   </td>
 
                   <td className="border p-3 text-center space-x-2">
                     <button
                       onClick={() => handleEdit(recipient)}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                      className="rounded bg-[#C9A84C] px-3 py-1 text-white transition hover:bg-[#B4923D]"
                     >
                       Edit
                     </button>
 
                     <button
                       onClick={() => handleDelete(recipient.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                      className="rounded bg-red-600 px-3 py-1 text-white transition hover:bg-red-700"
                     >
                       Delete
                     </button>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    )}
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-    {/* Add / Edit Modal */}
+      {/* Add / Edit Modal */}
 
-    {showModal && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white shadow-lg">
-          <div className="p-6">
-          <h2 className="text-2xl font-bold mb-6">
-            {editingRecipient ? "Edit Recipient" : "Add Recipient"}
-          </h2>
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white shadow-lg">
+            <div className="p-6">
+              <h2 className="mb-6 text-2xl font-bold text-[#0B1F3A]">
+                {editingRecipient ? "Edit Recipient" : "Add Recipient"}
+              </h2>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Edition ID */}
+              <form onSubmit={handleSubmit(onSubmit)}>
+                {/* Edition */}
 
-            <div className="mb-4">
-              <label className="block mb-2 font-medium">
-                Edition ID
-              </label>
-
-              <select
-                {...editionField}
-                onChange={async (event) => {
-                  editionField.onChange(event);
-                  setValue("category_id", "");
-                  try {
-                    await loadEditionCategories(event.target.value);
-                  } catch (err) {
-                    console.error(err);
-                    setEditionCategories([]);
-                    alert("Failed to load categories for this edition.");
-                  }
-                }}
-                className="w-full border rounded p-2"
-            >
-                <option value="">Select Edition</option>
-
-                {editions.map((edition) => (
+                <FormSelect
+                  label="Edition"
+                  {...editionField}
+                  onChange={async (event) => {
+                    editionField.onChange(event);
+                    setValue("category_id", "");
+                    try {
+                      await loadEditionCategories(event.target.value);
+                    } catch (err) {
+                      console.error(err);
+                      setEditionCategories([]);
+                      alert("Failed to load categories for this edition.");
+                    }
+                  }}
+                  error={errors.edition_id?.message}
+                >
+                  <option value="">Select Edition</option>
+                  {editions.map((edition) => (
                     <option key={edition.id} value={edition.id}>
-                        {edition.title} ({edition.year})
+                      {edition.title} ({edition.year})
                     </option>
-                ))}
-            </select>
+                  ))}
+                </FormSelect>
 
-              {errors.edition_id && (
-                <p className="text-red-500 text-sm">
-                  {errors.edition_id.message}
-                </p>
-              )}
-            </div>
+                {/* Category */}
 
-            {/* Category */}
+                <FormSelect
+                  label="Category"
+                  {...register("category_id", { valueAsNumber: true })}
+                  disabled={!editionCategories.length}
+                  error={errors.category_id?.message}
+                >
+                  <option value="">
+                    {editionCategories.length
+                      ? "Select Category"
+                      : "Select an edition first"}
+                  </option>
+                  {categories
+                    .filter((category) => editionCategories.includes(category.id))
+                    .map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.category_name}
+                      </option>
+                    ))}
+                </FormSelect>
 
-            <div className="mb-4">
-              <label className="block mb-2 font-medium">
-                Category
-              </label>
+                {/* Full Name */}
 
-              <select
-                {...register("category_id", { valueAsNumber: true })}
-                className="w-full border rounded p-2"
-                disabled={!editionCategories.length}
-              >
-                <option value="">{editionCategories.length ? "Select Category" : "Select an edition first"}</option>
-                {categories.filter((category) => editionCategories.includes(category.id)).map((category) => (
-                  <option key={category.id} value={category.id}>{category.category_name}</option>
-                ))}
-              </select>
+                <FormInput
+                  label="Full Name"
+                  type="text"
+                  placeholder="e.g. Ramesh Thapa"
+                  {...register("full_name")}
+                  error={errors.full_name?.message}
+                />
 
-              {errors.category_id && (
-                <p className="text-red-500 text-sm">
-                  {errors.category_id.message}
-                </p>
-              )}
-            </div>
+                {/* Title */}
 
-            {/* Full Name */}
+                <FormInput
+                  label="Title"
+                  type="text"
+                  placeholder="e.g. Founder, XYZ Foundation"
+                  {...register("title")}
+                  error={errors.title?.message}
+                />
 
-            <div className="mb-4">
-              <label className="block mb-2 font-medium">
-                Full Name
-              </label>
+                {/* Address */}
 
-              <input
-                type="text"
-                {...register("full_name")}
-                className="w-full border rounded p-2"
-              />
+                <FormInput
+                  label="Address"
+                  type="text"
+                  placeholder="e.g. Biratnagar, Koshi Province"
+                  {...register("address")}
+                  error={errors.address?.message}
+                />
 
-              {errors.full_name && (
-                <p className="text-red-500 text-sm">
-                  {errors.full_name.message}
-                </p>
-              )}
-            </div>
+                {/* Slug */}
 
-            {/* Title */}
+                <FormInput
+                  label="Slug"
+                  type="text"
+                  placeholder="Auto-generated from full name if left blank"
+                  {...register("slug")}
+                  error={errors.slug?.message}
+                />
 
-            <div className="mb-4">
-              <label className="block mb-2 font-medium">
-                Title
-              </label>
+                {/* Bio */}
 
-              <input
-                type="text"
-                {...register("title")}
-                className="w-full border rounded p-2"
-              />
+                <FormRichText
+                  label="Bio"
+                  value={watch("bio")}
+                  onChange={(html) =>
+                    setValue("bio", html, { shouldDirty: true, shouldValidate: true })
+                  }
+                  error={errors.bio?.message}
+                  placeholder="Write a short bio for this recipient..."
+                />
 
-              {errors.title && (
-                <p className="text-red-500 text-sm">
-                  {errors.title.message}
-                </p>
-              )}
-            </div>
+                {/* Photo URL */}
 
-            {/* Bio */}
+                <FormInput
+                  label="Photo URL"
+                  type="text"
+                  placeholder="https://..."
+                  {...register("photo_url")}
+                  error={errors.photo_url?.message}
+                />
 
-            <div className="mb-4">
-              <label className="block mb-2 font-medium">
-                Bio
-              </label>
+                {watch("photo_url") && (
+                  <div className="mb-6 flex items-center gap-3">
+                    <span className="text-sm text-gray-500">Preview:</span>
+                    <FacebookMedia
+                      src={watch("photo_url")}
+                      alt="Photo preview"
+                      className="h-16 w-16 rounded-full object-cover"
+                      onError={() => {}}
+                      placeholder={
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-xs text-slate-400">
+                          N/A
+                        </div>
+                      }
+                    />
+                  </div>
+                )}
 
-              <textarea
-                rows={4}
-                {...register("bio")}
-                className="w-full border rounded p-2"
-              />
+                {/* Buttons */}
 
-              {errors.bio && (
-                <p className="text-red-500 text-sm">
-                  {errors.bio.message}
-                </p>
-              )}
-            </div>
+                <div className="sticky bottom-0 flex justify-end gap-3 border-t bg-white pt-4">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="rounded bg-gray-500 px-4 py-2 text-white transition hover:bg-gray-600"
+                  >
+                    Cancel
+                  </button>
 
-            {/* Photo URL */}
-
-            <div className="mb-6">
-              <label className="block mb-2 font-medium">
-                Photo URL
-              </label>
-
-              <input
-                type="text"
-                {...register("photo_url")}
-                className="w-full border rounded p-2"
-              />
-
-              {errors.photo_url && (
-                <p className="text-red-500 text-sm">
-                  {errors.photo_url.message}
-                </p>
-              )}
-            </div>
-
-            {/* Buttons */}
-
-            <div className="sticky bottom-0 flex justify-end gap-3 bg-white pt-4 border-t">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowModal(false);
-                  setEditingRecipient(null);
-                  setEditionCategories([]);
-
-                  reset({
-                    edition_id: "",
-                    category_id: "",
-                    full_name: "",
-                    title: "",
-                    bio: "",
-                    photo_url: "",
-                  });
-                }}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-              >
-                {editingRecipient
-                  ? "Update Recipient"
-                  : "Create Recipient"}
-              </button>
-            </div>
-          </form>
+                  <button
+                    type="submit"
+                    className="rounded bg-[#0B1F3A] px-4 py-2 text-white transition hover:bg-[#162D50]"
+                  >
+                    {editingRecipient ? "Update Recipient" : "Create Recipient"}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
 }

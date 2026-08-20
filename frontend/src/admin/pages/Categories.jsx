@@ -178,6 +178,8 @@ export default function Categories() {
     }
   };
 
+  
+
   // =======================
   // JSX starts here
   // =======================

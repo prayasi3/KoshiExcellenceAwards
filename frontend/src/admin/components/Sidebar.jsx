@@ -78,16 +78,6 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
       icon: Newspaper,
       path: "/admin/news",
     },
-    {
-      name: "Contact Messages",
-      icon: Mail,
-      path: "/admin/contacts",
-    },
-    {
-      name: "Users",
-      icon: UserCog,
-      path: "/admin/users",
-    },
   ];
 
   return (
