@@ -225,7 +225,7 @@ export default function Sponsors() {
 
       <button
         onClick={handleAdd}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        className="whitespace-nowrap rounded-lg bg-[#0B1F3A] px-4 py-2 font-medium text-white transition hover:bg-[#162D50]"
       >
         + Add Sponsor
       </button>

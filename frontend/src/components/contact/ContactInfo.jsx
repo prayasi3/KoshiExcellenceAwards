@@ -16,8 +16,8 @@ const CONTACT_DETAILS = [
   {
     icon: Phone,
     label: "Phone",
-    value: "+977-1-4000000",
-    href: "tel:+97714000000",
+    value: "+977-9852048996",
+    href: "tel:+9779852048996",
   },
   {
     icon: Clock,
