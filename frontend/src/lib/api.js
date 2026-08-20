@@ -9,6 +9,26 @@ export const API_BASE_URL =
  * Older category rows may not have a stored slug, so the category name is a
  * reliable fallback until those records are updated in the admin panel.
  */
+
+/**
+ * Strips HTML tags from rich-text editor output for use in card previews,
+ * excerpts, etc. Truncates to `maxLength` characters (default 140) with an
+ * ellipsis.
+ */
+export function stripHtml(html, maxLength = 140) {
+  if (!html) return "";
+
+  const text = html
+    .replace(/<\/(p|div|li|h[1-6])>/gi, " ")
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!maxLength || text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}…`;
+}
+
 export function toSlug(value) {
   return String(value || "")
     .normalize("NFKD")

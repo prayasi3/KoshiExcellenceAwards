@@ -2,6 +2,7 @@
 
 import { User } from "lucide-react";
 import FacebookMedia from "../common/FacebookMedia";
+import { stripHtml } from "../../lib/api";
 
 const roleLabels = {
   chairman: "Chairman",
@@ -45,7 +46,7 @@ export default function LeadershipCard({ member, accentColor }) {
 
       {member.bio && (
         <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-500">
-          {member.bio}
+          {stripHtml(member.bio, 160)}
         </p>
       )}
     </article>

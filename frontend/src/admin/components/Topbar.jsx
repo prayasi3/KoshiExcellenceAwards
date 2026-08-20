@@ -8,7 +8,7 @@ export default function Topbar({ onMenuClick = () => {} }) {
     "/admin": "Dashboard",
     "/admin/editions": "Editions",
     "/admin/categories": "Categories",
-    "/admin/recipients": "Recipients",
+    "/admin/recipients": "Awarded",
     "/admin/honorees": "Honorees",
     "/admin/sponsors": "Sponsors",
     "/admin/speakers": "Speakers",
@@ -23,7 +23,7 @@ export default function Topbar({ onMenuClick = () => {} }) {
 
   const user =
     JSON.parse(localStorage.getItem("user")) || {
-      full_name: "Administrator",
+      full_name: "User",
     };
 
   return (
@@ -46,7 +46,7 @@ export default function Topbar({ onMenuClick = () => {} }) {
           </h1>
 
           <p className="hidden text-sm text-gray-500 sm:block">
-            Admin Dashboard
+            {user.email}
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export default function Topbar({ onMenuClick = () => {} }) {
             </p>
 
             <p className="text-sm text-gray-500">
-              Administrator
+              Admin
             </p>
 
           </div>

@@ -285,9 +285,9 @@ export default function Recipients() {
 
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[#0B1F3A]">Recipients</h1>
+          <h1 className="text-3xl font-bold text-[#0B1F3A]">Awarded</h1>
           <p className="mt-1 text-sm text-gray-500">
-            {recipients.length} recipient{recipients.length === 1 ? "" : "s"} total
+            {recipients.length} Awarded{recipients.length === 1 ? "" : ""} total
           </p>
         </div>
 
@@ -304,7 +304,7 @@ export default function Recipients() {
             onClick={handleAdd}
             className="whitespace-nowrap rounded-lg bg-[#0B1F3A] px-4 py-2 font-medium text-white transition hover:bg-[#162D50]"
           >
-            + Add Recipient
+            + Add Awarded
           </button>
         </div>
       </div>

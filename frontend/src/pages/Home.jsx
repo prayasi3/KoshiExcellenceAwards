@@ -213,13 +213,13 @@ export default function Home() {
       </header>
 
       {/* ── Stats strip (overlaps the hero, like the reference design) ── */}
-      <section className="relative z-10 mx-auto -mt-16 w-full max-w-6xl px-5 md:px-10">
+      <section className="relative z-10 mx-3 -mt-16 sm:mx-6 lg:mx-10">
         <Reveal className="grid grid-cols-2 overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-xl sm:grid-cols-3 lg:grid-cols-7">
           {stats.map((stat) => (
             <div key={stat.label} className="border-b border-r border-slate-100 px-4 py-6 text-center last:border-r-0 sm:px-5 lg:border-b-0 lg:py-8">
               <p className="font-sans text-3xl font-extrabold tracking-tight text-[#0B1F3A] sm:text-4xl">
                 {stat.value}
-               </p>
+              </p>
               <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
                 {stat.label}
               </p>
@@ -229,7 +229,7 @@ export default function Home() {
       </section>
 
       {/* ── About ── */}
-      <section className="bg-gradient-to-b from-[#F8F4E7] via-white to-white pb-20 pt-0 sm:pb-24">
+      <section className="bg-gradient-to-b from-[#F8F4E7] via-white to-white pb-20 pt-16 sm:pb-24 sm:pt-20">
         <div className="mx-auto grid max-w-7xl gap-14 px-5 md:px-10 lg:grid-cols-2 lg:items-center">
           <Reveal>
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#C9A84C]">

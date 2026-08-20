@@ -44,7 +44,7 @@ export default function Sidebar({ open = false, onClose = () => {} }) {
       path: "/admin/categories",
     },
     {
-      name: "Recipients",
+      name: "Awarded",
       icon: Trophy,
       path: "/admin/recipients",
     },
