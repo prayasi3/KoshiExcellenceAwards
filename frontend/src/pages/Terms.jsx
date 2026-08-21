@@ -50,13 +50,32 @@ export default function Terms() {
             You may use the Site only for lawful purposes and in accordance
             with these Terms. You agree not to:
           </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-600">
-            <li>Use the Site in any way that violates applicable Nepali or international law</li>
-            <li>Attempt to gain unauthorized access to the Site, its servers, or any connected systems</li>
-            <li>Submit false, misleading, or fraudulent information in a nomination, registration, or sponsorship form</li>
-            <li>Interfere with or disrupt the Site's functionality, including through malware, scraping, or automated data collection</li>
-            <li>Use content from the Site for commercial purposes without our prior written consent</li>
-          </ul>
+          <ul className="mt-4 space-y-2 leading-7 text-slate-600 pl-0 m-0 list-none">
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Use the Site in any way that violates applicable Nepali or international law
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Attempt to gain unauthorized access to the Site, its servers, or any connected systems
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Submit false, misleading, or fraudulent information in a nomination, registration, or sponsorship form
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Interfere with or disrupt the Site's functionality, including through malware, scraping, or automated data collection
+          </li>
+
+  <li className="relative pl-6">
+    <span className="absolute left-0 top-0">•</span>
+    Use content from the Site for commercial purposes without our prior written consent
+  </li>
+</ul>
 
           {/* 3 */}
           <h2 className="mt-10 font-heading text-2xl font-bold text-[#0B1F3A]">
@@ -68,12 +87,27 @@ export default function Terms() {
             nomination does not guarantee selection as a recipient or
             honoree. We reserve the right, at our sole discretion, to:
           </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-600">
-            <li>Accept, reject, or request clarification on any nomination</li>
-            <li>Verify the accuracy of information submitted about a nominee</li>
-            <li>Modify award categories, criteria, or the number of recipients between editions</li>
-            <li>Postpone, reschedule, or modify the format of the award ceremony</li>
-          </ul>
+          <ul className="mt-4 space-y-2 leading-7 text-slate-600 pl-0 m-0 list-none">
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Accept, reject, or request clarification on any nomination
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Verify the accuracy of information submitted about a nominee
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Modify award categories, criteria, or the number of recipients between editions
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Postpone, reschedule, or modify the format of the award ceremony
+          </li>
+        </ul>
 
           {/* 4 */}
           <h2 className="mt-10 font-heading text-2xl font-bold text-[#0B1F3A]">
@@ -195,7 +229,7 @@ export default function Terms() {
             <p>
               Email:{" "}
               
-                < a href="mailto:info@koshiexcellenceaward.com"
+                <a href="mailto:info@koshiexcellenceaward.com"
                 className="text-[#0B1F3A] underline decoration-[#C9A84C] underline-offset-2 hover:text-[#C9A84C]"
               >
                 info@koshiexcellenceaward.com

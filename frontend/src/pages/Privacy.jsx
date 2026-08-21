@@ -78,14 +78,37 @@ export default function Privacy() {
           <p className="mt-3 leading-7 text-slate-600">
             We use the information we collect to:
           </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-600">
-            <li>Process and evaluate nominations and sponsorship applications</li>
-            <li>Communicate with you about the awards, ceremony, or your inquiry</li>
-            <li>Publish recipient and honoree profiles on the Site and in event materials</li>
-            <li>Coordinate event logistics, registration, and guest lists</li>
-            <li>Improve the Site's content, functionality, and user experience</li>
-            <li>Comply with applicable legal obligations</li>
-          </ul>
+          <ul className="mt-4 space-y-2 pl-0 m-0 list-none leading-7 text-slate-600">
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Process and evaluate nominations and sponsorship applications
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Communicate with you about the awards, ceremony, or your inquiry
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Publish recipient and honoree profiles on the Site and in event materials
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Coordinate event logistics, registration, and guest lists
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Improve the Site's content, functionality, and user experience
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Comply with applicable legal obligations
+          </li>
+        </ul>
 
           {/* 3 */}
           <h2 className="mt-10 font-heading text-2xl font-bold text-[#0B1F3A]">
@@ -111,25 +134,32 @@ export default function Privacy() {
             We do not sell your personal information. We may share
             information with:
           </p>
-          <ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-600">
-            <li>
-              Event partners and vendors who assist with venue operations,
-              printing, photography, or ceremony production, solely for
-              the purpose of delivering the event
-            </li>
-            <li>
-              Sponsors and media partners of the Koshi Excellence Award,
-              where relevant to your role as a sponsor, speaker, or partner
-            </li>
-            <li>
-              Service providers who host the Site or process form
-              submissions on our behalf
-            </li>
-            <li>
-              Government or regulatory authorities where required by
-              Nepali law
-            </li>
-          </ul>
+          <ul className="mt-4 space-y-2 pl-0 m-0 list-none leading-7 text-slate-600">
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Event partners and vendors who assist with venue operations,
+            printing, photography, or ceremony production, solely for the
+            purpose of delivering the event
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Sponsors and media partners of the Koshi Excellence Award,
+            where relevant to your role as a sponsor, speaker, or partner
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Service providers who host the Site or process form
+            submissions on our behalf
+          </li>
+
+          <li className="relative pl-6">
+            <span className="absolute left-0 top-0">•</span>
+            Government or regulatory authorities where required by
+            Nepali law
+          </li>
+        </ul>
 
           {/* 5 */}
           <h2 className="mt-10 font-heading text-2xl font-bold text-[#0B1F3A]">

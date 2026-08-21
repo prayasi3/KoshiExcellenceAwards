@@ -43,6 +43,7 @@ export default function Categories() {
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
@@ -178,7 +179,14 @@ export default function Categories() {
     }
   };
 
-  
+  const visibleCategories = categories.filter((category) => {
+  if (!searchTerm.trim()) return true;
+  const term = searchTerm.trim().toLowerCase();
+  return (
+    category.category_name?.toLowerCase().includes(term) ||
+    stripHtml(category.description).toLowerCase().includes(term)
+  );
+});
 
   // =======================
   // JSX starts here
@@ -192,9 +200,12 @@ export default function Categories() {
         ======================== */}
 
         <PageHeader
-            title="Categories"
-            buttonText="Add Category"
-            onAdd={handleAdd}
+          title="Categories"
+          buttonText="Add Category"
+          onAdd={handleAdd}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          searchPlaceholder="Search by category name..."
         />
 
         {/* =======================
